@@ -9,7 +9,7 @@ export function validate(schema) {
       query: req.query
     };
     const { error, value } = schema.validate(toValidate, { abortEarly: false, allowUnknown: true });
-    if (error) return next(badRequest('Validation error', error.details));
+    if (error) return next(badRequest(error?.details[0].message));
     req.body = value.body;
     req.params = value.params;
     req.query = value.query;
