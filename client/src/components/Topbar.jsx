@@ -3,7 +3,7 @@ import { FiChevronLeft, FiChevronRight, FiSearch, FiBell, FiMenu } from 'react-i
 
 const Topbar = ({ query, setQuery, onBack, onMenu, collapsed = false }) => {
   return (
-    <header className="h-16 border-b bg-white flex items-center justify-between px-3 sm:px-5">
+    <header className="h-16 border-b border-b-gray-200 bg-white flex items-center justify-between px-3 sm:px-5">
       <div className="flex items-center gap-2 min-w-0 flex-1">
         {/* Mobile menu toggle */}
         <button onClick={onMenu} className="lg:hidden p-2 rounded-lg hover:bg-gray-100" aria-label="Open menu">

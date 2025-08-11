@@ -38,5 +38,23 @@ export const UserController = {
       await UserService.remove(Number(req.params.user_id));
       return success(res, null, 'User removed', 204);
     } catch (e) { next(e); }
+  },
+  async updateStatus(req, res, next) {
+    try {
+      const user = await UserService.updateStatus(Number(req.params.user_id), req.body.status);
+      return success(res, user, 'Status updated');
+    } catch (e) { next(e); }
+  },
+  async analytics(req, res, next) {
+    try {
+      const data = await UserService.getAnalytics();
+      return success(res, data);
+    } catch (e) { next(e); }
+  },
+  async updateRole(req, res, next) {
+    try {
+      const user = await UserService.updateRole(Number(req.params.user_id), Number(req.body.role_id));
+      return success(res, user, 'Role updated');
+    } catch (e) { next(e); }
   }
 };

@@ -4,7 +4,8 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Register from './pages/Register'
 import DashboardLayout from './layouts/DashboardLayout'
-import Machines from './pages/Machines'
+import Machines from './pages/machines/Machines'
+import { Users } from './pages/users/Users'
 
 function App() {
 
@@ -23,7 +24,7 @@ function App() {
           <Route path="maintenance" element={<div className='p-6'>Maintenance</div>} />
           <Route path="breakdown" element={<div className='p-6'>Breakdown</div>} />
           <Route path="kaizen" element={<div className='p-6'>Kaizen</div>} />
-          <Route path="users" element={<div className='p-6'>Users</div>} />
+          <Route path="users" element={<Users/>} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

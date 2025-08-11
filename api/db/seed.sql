@@ -3,7 +3,7 @@ INSERT INTO roles (role_id, name) VALUES (1, 'admin') ON DUPLICATE KEY UPDATE na
 INSERT INTO roles (role_id, name) VALUES (2, 'user') ON DUPLICATE KEY UPDATE name = VALUES(name);
 
 -- Seed permissions
-SET @perms = 'user.list,user.update,user.delete,permission.add,permission.list,permission.delete,permission.assign,permission.revoke,divisionType.add,divisionType.list,divisionType.update,divisionType.delete,division.add,division.list,division.update,division.delete,machine.add,machine.list,machine.update,machine.delete,meter.add,meter.list,meter.update,meter.delete,parameter.add,parameter.list,parameter.update,parameter.delete';
+SET @perms = 'user.list,user.update,user.status.update,user.analytics,user.delete,permission.add,permission.list,permission.delete,permission.assign,permission.revoke,divisionType.add,divisionType.list,divisionType.update,divisionType.delete,division.add,division.list,division.update,division.delete,machine.add,machine.list,machine.update,machine.delete,meter.add,meter.list,meter.update,meter.delete,parameter.add,parameter.list,parameter.update,parameter.delete';
 
 -- Insert permissions if not exists
 DROP TEMPORARY TABLE IF EXISTS tmp_perms;

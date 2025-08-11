@@ -92,3 +92,48 @@ export const updateSchema = Joi.object({
       })
   })
 });
+
+export const updateStatusSchema = Joi.object({
+  params: Joi.object({
+    user_id: Joi.number()
+      .integer()
+      .required()
+      .messages({
+        'number.base': 'User ID must be a number.',
+        'number.integer': 'User ID must be an integer.',
+        'any.required': 'User ID is required.'
+      })
+  }),
+  body: Joi.object({
+    status: Joi.string()
+      .valid('pending', 'verified', 'deleted')
+      .required()
+      .messages({
+        'any.only': 'Status must be one of: pending, verified, deleted.',
+        'any.required': 'Status is required.'
+      })
+  })
+});
+
+export const updateRoleSchema = Joi.object({
+  params: Joi.object({
+    user_id: Joi.number()
+      .integer()
+      .required()
+      .messages({
+        'number.base': 'User ID must be a number.',
+        'number.integer': 'User ID must be an integer.',
+        'any.required': 'User ID is required.'
+      })
+  }),
+  body: Joi.object({
+    role_id: Joi.number()
+      .integer()
+      .required()
+      .messages({
+        'number.base': 'Role ID must be a number.',
+        'number.integer': 'Role ID must be an integer.',
+        'any.required': 'Role ID is required.'
+      })
+  })
+});

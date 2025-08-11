@@ -32,5 +32,19 @@ export const UserService = {
   },
   async remove(user_id) {
     return UserModel.remove(user_id);
+  },
+  async updateStatus(user_id, status) {
+    const allowed = ['pending', 'verified', 'deleted'];
+    if (!allowed.includes(status)) throw badRequest('Invalid status');
+    return UserModel.updateStatus(user_id, status);
+  },
+  async getAnalytics() {
+    return UserModel.getAnalytics();
+  },
+  async updateRole(user_id, role_id) {
+    if (!Number.isInteger(role_id)) throw badRequest('Invalid role id');
+    const user = await UserModel.findById(user_id);
+    if (!user) throw notFound('User not found');
+    return UserModel.updateRole(user_id, role_id);
   }
 };

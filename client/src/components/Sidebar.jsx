@@ -5,7 +5,7 @@ const Sidebar = ({ onNavigate, collapsed = false }) => {
   return (
     <aside className={`${collapsed ? 'w-16' : 'w-72 lg:w-64'} bg-gray-50 border-r border-gray-200 h-full flex flex-col shadow-sm transition-[width] duration-300 ease-in-out`}>
       {/* Header */}
-      <div className={`px-6 py-6 bg-white border-b border-gray-200 ${collapsed ? 'flex items-center justify-center' : ''} transition-[padding] duration-300 ease-in-out`}>
+      <div className={`px-6 py-6 bg-white ${collapsed ? 'flex items-center justify-center' : ''} transition-[padding] duration-300 ease-in-out`}>
         <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
           <div className="h-10 w-10 flex items-center justify-center text-white rounded-xl shadow-sm">
            <img src="/logo.png" alt="" />
@@ -18,7 +18,7 @@ const Sidebar = ({ onNavigate, collapsed = false }) => {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 bg-gray-50 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 bg-white overflow-y-auto">
         <div className="space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon
@@ -28,6 +28,7 @@ const Sidebar = ({ onNavigate, collapsed = false }) => {
                 to={item.to}
                 onClick={onNavigate}
                 title={item.label}
+                end={item.to === '/dashboard'}
                 className={({ isActive }) =>
                   `group w-full flex ${collapsed ? 'justify-center' : 'items-center gap-3'} px-3 py-2.5 rounded-xl transition-colors duration-200 ${
                     isActive 
