@@ -6,7 +6,7 @@ export const DivisionModel = {
     return { division_id: result.insertId, title, parent_id, division_type_id };
   },
   async list() {
-    return query('SELECT * FROM divisions ORDER BY division_id DESC');
+    return query('SELECT d.division_id, d.title, d.parent_id, dt.title as divition_type, dt.division_type_id FROM divisions d JOIN division_types dt ON dt.division_type_id = d.division_type_id ORDER BY d.division_id DESC');
   },
   async update(id, { title, parent_id = null, division_type_id }) {
     await query('UPDATE divisions SET title = ?, parent_id = ?, division_type_id = ? WHERE division_id = ?', [title, parent_id, division_type_id, id]);

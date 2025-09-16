@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthService } from '../services/auth'
+import { toast } from 'react-toastify';
 
 const Register = () => {
   const navigate = useNavigate()
@@ -16,17 +17,17 @@ const Register = () => {
     setError(''); setSuccess('')
     const { first_name, last_name, email, password } = form
     if (!first_name || !last_name || !email || !password) {
-      setError('All fields are required')
+      toast.error('All fields are required')
       return
     }
     try {
       setLoading(true)
       await AuthService.register(form)
-      setSuccess('Account created. You can login now.')
+      toast.success('Account created. Wait untill verification')
       setTimeout(() => navigate('/'), 800)
     } catch (err) {
         console.error('Registration error:', err)
-      setError(err?.message || 'Registration failed')
+      toast.error(err?.message || 'Registration failed')
     } finally { setLoading(false) }
   }
 

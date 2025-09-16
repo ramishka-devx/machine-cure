@@ -81,8 +81,203 @@ CREATE TABLE IF NOT EXISTS activities (
   FOREIGN KEY (permission_id) REFERENCES permissions(permission_id)
 );
 
+CREATE TABLE IF NOT EXISTS kaizen_categories (
+  category_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE,
+  description TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS kaizen_statuses (
+  status_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL UNIQUE,
+  description TEXT,
+  sort_order INT DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS kaizens (
+  kaizen_id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(200) NOT NULL,
+  description TEXT NOT NULL,
+  problem_statement TEXT,
+  proposed_solution TEXT NOT NULL,
+  expected_benefits TEXT,
+  implementation_plan TEXT,
+  category_id INT NOT NULL,
+  status_id INT NOT NULL,
+  priority ENUM('low', 'medium', 'high', 'critical') DEFAULT 'medium',
+  submitted_by INT NOT NULL,
+  assigned_to INT NULL,
+  machine_id INT NULL,
+  division_id INT NULL,
+  estimated_cost DECIMAL(10,2) DEFAULT 0,
+  estimated_savings DECIMAL(10,2) DEFAULT 0,
+  estimated_implementation_days INT DEFAULT 0,
+  actual_cost DECIMAL(10,2) NULL,
+  actual_savings DECIMAL(10,2) NULL,
+  actual_implementation_days INT NULL,
+  submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  assigned_at TIMESTAMP NULL,
+  started_at TIMESTAMP NULL,
+  completed_at TIMESTAMP NULL,
+  reviewed_at TIMESTAMP NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (category_id) REFERENCES kaizen_categories(category_id),
+  FOREIGN KEY (status_id) REFERENCES kaizen_statuses(status_id),
+  FOREIGN KEY (submitted_by) REFERENCES users(user_id),
+  FOREIGN KEY (assigned_to) REFERENCES users(user_id),
+  FOREIGN KEY (machine_id) REFERENCES machines(machine_id) ON DELETE SET NULL,
+  FOREIGN KEY (division_id) REFERENCES divisions(division_id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS kaizen_comments (
+  comment_id INT AUTO_INCREMENT PRIMARY KEY,
+  kaizen_id INT NOT NULL,
+  user_id INT NOT NULL,
+  comment TEXT NOT NULL,
+  is_internal BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (kaizen_id) REFERENCES kaizens(kaizen_id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS kaizen_attachments (
+  attachment_id INT AUTO_INCREMENT PRIMARY KEY,
+  kaizen_id INT NOT NULL,
+  filename VARCHAR(255) NOT NULL,
+  original_filename VARCHAR(255) NOT NULL,
+  file_path VARCHAR(500) NOT NULL,
+  file_size INT NOT NULL,
+  mime_type VARCHAR(100) NOT NULL,
+  uploaded_by INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (kaizen_id) REFERENCES kaizens(kaizen_id) ON DELETE CASCADE,
+  FOREIGN KEY (uploaded_by) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS kaizen_history (
+  history_id INT AUTO_INCREMENT PRIMARY KEY,
+  kaizen_id INT NOT NULL,
+  user_id INT NOT NULL,
+  action VARCHAR(100) NOT NULL,
+  old_status_id INT NULL,
+  new_status_id INT NULL,
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (kaizen_id) REFERENCES kaizens(kaizen_id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(user_id),
+  FOREIGN KEY (old_status_id) REFERENCES kaizen_statuses(status_id),
+  FOREIGN KEY (new_status_id) REFERENCES kaizen_statuses(status_id)
+);
+
+CREATE TABLE IF NOT EXISTS breakdown_statuses (
+  status_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL UNIQUE,
+  description TEXT,
+  sort_order INT DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS breakdown_categories (
+  category_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE,
+  description TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS machine_breakdowns (
+  breakdown_id INT AUTO_INCREMENT PRIMARY KEY,
+  machine_id INT NOT NULL,
+  title VARCHAR(200) NOT NULL,
+  description TEXT NOT NULL,
+  category_id INT NOT NULL,
+  status_id INT NOT NULL,
+  severity ENUM('low', 'medium', 'high', 'critical') DEFAULT 'medium',
+  reported_by INT NOT NULL,
+  assigned_to INT NULL,
+  estimated_downtime_hours DECIMAL(5,2) DEFAULT 0,
+  actual_downtime_hours DECIMAL(5,2) NULL,
+  estimated_repair_cost DECIMAL(10,2) DEFAULT 0,
+  actual_repair_cost DECIMAL(10,2) NULL,
+  breakdown_start_time TIMESTAMP NOT NULL,
+  breakdown_end_time TIMESTAMP NULL,
+  reported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  assigned_at TIMESTAMP NULL,
+  repair_started_at TIMESTAMP NULL,
+  repair_completed_at TIMESTAMP NULL,
+  verified_at TIMESTAMP NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (machine_id) REFERENCES machines(machine_id),
+  FOREIGN KEY (category_id) REFERENCES breakdown_categories(category_id),
+  FOREIGN KEY (status_id) REFERENCES breakdown_statuses(status_id),
+  FOREIGN KEY (reported_by) REFERENCES users(user_id),
+  FOREIGN KEY (assigned_to) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS breakdown_repairs (
+  repair_id INT AUTO_INCREMENT PRIMARY KEY,
+  breakdown_id INT NOT NULL,
+  repair_title VARCHAR(200) NOT NULL,
+  repair_description TEXT NOT NULL,
+  repair_type ENUM('replacement', 'maintenance', 'adjustment', 'cleaning', 'other') NOT NULL,
+  parts_used TEXT NULL,
+  labor_hours DECIMAL(5,2) DEFAULT 0,
+  parts_cost DECIMAL(10,2) DEFAULT 0,
+  labor_cost DECIMAL(10,2) DEFAULT 0,
+  performed_by INT NOT NULL,
+  started_at TIMESTAMP NULL,
+  completed_at TIMESTAMP NULL,
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (breakdown_id) REFERENCES machine_breakdowns(breakdown_id) ON DELETE CASCADE,
+  FOREIGN KEY (performed_by) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS breakdown_comments (
+  comment_id INT AUTO_INCREMENT PRIMARY KEY,
+  breakdown_id INT NOT NULL,
+  user_id INT NOT NULL,
+  comment TEXT NOT NULL,
+  is_internal BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (breakdown_id) REFERENCES machine_breakdowns(breakdown_id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS breakdown_attachments (
+  attachment_id INT AUTO_INCREMENT PRIMARY KEY,
+  breakdown_id INT NOT NULL,
+  filename VARCHAR(255) NOT NULL,
+  original_filename VARCHAR(255) NOT NULL,
+  file_path VARCHAR(500) NOT NULL,
+  file_size INT NOT NULL,
+  mime_type VARCHAR(100) NOT NULL,
+  uploaded_by INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (breakdown_id) REFERENCES machine_breakdowns(breakdown_id) ON DELETE CASCADE,
+  FOREIGN KEY (uploaded_by) REFERENCES users(user_id)
+);
+
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_divisions_parent ON divisions(parent_id);
 CREATE INDEX IF NOT EXISTS idx_machines_division ON machines(division_id);
 CREATE INDEX IF NOT EXISTS idx_meters_machine ON meters(machine_id);
 CREATE INDEX IF NOT EXISTS idx_parameters_meter ON parameters(meter_id);
+CREATE INDEX IF NOT EXISTS idx_kaizens_submitted_by ON kaizens(submitted_by);
+CREATE INDEX IF NOT EXISTS idx_kaizens_assigned_to ON kaizens(assigned_to);
+CREATE INDEX IF NOT EXISTS idx_kaizens_status ON kaizens(status_id);
+CREATE INDEX IF NOT EXISTS idx_kaizens_category ON kaizens(category_id);
+CREATE INDEX IF NOT EXISTS idx_kaizens_machine ON kaizens(machine_id);
+CREATE INDEX IF NOT EXISTS idx_kaizens_division ON kaizens(division_id);
+CREATE INDEX IF NOT EXISTS idx_kaizen_comments_kaizen ON kaizen_comments(kaizen_id);
+CREATE INDEX IF NOT EXISTS idx_kaizen_history_kaizen ON kaizen_history(kaizen_id);
+CREATE INDEX IF NOT EXISTS idx_breakdowns_machine ON machine_breakdowns(machine_id);
+CREATE INDEX IF NOT EXISTS idx_breakdowns_status ON machine_breakdowns(status_id);
+CREATE INDEX IF NOT EXISTS idx_breakdowns_category ON machine_breakdowns(category_id);
+CREATE INDEX IF NOT EXISTS idx_breakdowns_reported_by ON machine_breakdowns(reported_by);
+CREATE INDEX IF NOT EXISTS idx_breakdowns_assigned_to ON machine_breakdowns(assigned_to);
+CREATE INDEX IF NOT EXISTS idx_repairs_breakdown ON breakdown_repairs(breakdown_id);
+CREATE INDEX IF NOT EXISTS idx_breakdown_comments_breakdown ON breakdown_comments(breakdown_id);

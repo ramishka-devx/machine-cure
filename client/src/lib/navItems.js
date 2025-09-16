@@ -12,6 +12,15 @@ export const navItems = [
       { key: 'insights', label: 'Insights', to: '/dashboard' },
     ],
   },
+    {
+    key: 'divisions',
+    label: 'Divisions',
+    to: '/dashboard/divisions',
+    icon: FiHome,
+    children: [
+      { key: 'divisions', label: 'divisions', to: '/dashboard/divisions' },
+    ],
+  },
   {
     key: 'machines',
     label: 'Machines',
@@ -22,16 +31,16 @@ export const navItems = [
       { key: 'machines-status', label: 'Statuses', to: '/dashboard/machines' },
     ],
   },
-  {
-    key: 'records',
-    label: 'Records',
-    to: '/dashboard/records',
-    icon: FiDatabase,
-    children: [
-      { key: 'records-production', label: 'Production records', to: '/dashboard/records' },
-      { key: 'records-energy', label: 'Energy usage', to: '/dashboard/records' },
-    ],
-  },
+  // {
+  //   key: 'records',
+  //   label: 'Records',
+  //   to: '/dashboard/records',
+  //   icon: FiDatabase,
+  //   children: [
+  //     { key: 'records-production', label: 'Production records', to: '/dashboard/records' },
+  //     { key: 'records-energy', label: 'Energy usage', to: '/dashboard/records' },
+  //   ],
+  // },
   {
     key: 'maintenance',
     label: 'Maintenance',
@@ -52,12 +61,13 @@ export const navItems = [
     ],
   },
   {
-    key: 'kaizen',
-    label: 'Kaizen',
-    to: '/dashboard/kaizen',
+    key: 'kaizens',
+    label: 'Kaizens',
+    to: '/dashboard/kaizens',
     icon: FiZap,
     children: [
-      { key: 'kaizen-ideas', label: 'Ideas', to: '/dashboard/kaizen' },
+      { key: 'kaizens-all', label: 'All Kaizens', to: '/dashboard/kaizens' },
+      { key: 'kaizens-my', label: 'My Kaizens', to: '/dashboard/kaizens?submitted_by=me' },
     ],
   },
   {

@@ -1,5 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { UsersService } from '../../services/users'
+import { RoleSelector } from './components/RoleSelector'
+import { RoleManager } from './components/RoleManager'
+import { toast } from 'react-toastify'
 
 export const Users = () => {
   const [loading, setLoading] = useState(true)
@@ -10,7 +13,8 @@ export const Users = () => {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
   const [analytics, setAnalytics] = useState({ total: 0, verified: 0, pending: 0, deleted: 0 })
-
+  const [showRoleManager, setShowRoleManager] = useState(false)
+  const [refreshFlag, setRefrshFlag] = useState(false);
   const totalPages = useMemo(() => Math.max(1, Math.ceil(total / limit)), [total, limit])
 
   useEffect(() => {
@@ -32,7 +36,7 @@ export const Users = () => {
     }
     load()
     return () => { ignore = true }
-  }, [page, limit])
+  }, [page, limit, refreshFlag])
 
   useEffect(() => {
     let ignore = false
@@ -74,13 +78,33 @@ export const Users = () => {
     } catch (e) {
       // rollback on error
       setRows(prev)
-      alert(e?.message || 'Failed to update status')
+      toast.error(e?.message || 'Failed to update status')
+    }
+  }
+
+  const onChangeRole = async (user, roleId) => {
+    const prev = [...rows]
+    setRows((r) => r.map((x) => x.user_id === user.user_id ? { ...x, role_id: roleId } : x))
+    try {
+      await UsersService.updateRole(user.user_id, roleId)
+    } catch (e) {
+      // rollback on error
+      setRows(prev)
+      toast.error(e?.message || 'Failed to update role')
     }
   }
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-semibold mb-4">User Management</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-semibold">User Management</h2>
+        <button
+          onClick={() => setShowRoleManager(true)}
+          className="bg-blue-600 text-white px-2 py-1 rounded-sm hover:bg-blue-800 flex items-center gap-2"
+        >
+          Roles
+        </button>
+      </div>
 
       {/* Analytics cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -88,22 +112,22 @@ export const Users = () => {
           {
             label: 'Total Users',
             key: 'total',
-            color: 'bg-blue-50 text-blue-700'
+            color: 'bg-blue-50 text-blue-600'
           },
           {
             label: 'Verified Users',
             key: 'verified',
-            color: 'bg-green-50 text-green-700'
+            color: 'bg-blue-50  text-blue-600'
           },
           {
             label: 'Pending Verifications',
             key: 'pending',
-            color: 'bg-amber-50 text-amber-700'
+            color: 'bg-blue-50  text-blue-600'
           },
           {
             label: 'Deactivated Accounts',
             key: 'deleted',
-            color: 'bg-rose-50 text-rose-700'
+            color: 'bg-blue-50 text-blue-600'
           }
         ].map((c) => (
           <div key={c.key} className={`rounded-xl border border-gray-200 p-4 ${c.color}`}>
@@ -142,7 +166,13 @@ export const Users = () => {
                   <tr key={u.user_id} className="border-t border-gray-100">
                     <td className="px-4 py-2">{u.first_name} {u.last_name}</td>
                     <td className="px-4 py-2">{u.email}</td>
-                    <td className="px-4 py-2 capitalize">{u.role || u.role_id}</td>
+                    <td className="px-4 py-2">
+                      <RoleSelector
+                        value={u.role_id}
+                        onChange={(roleId) => onChangeRole(u, roleId)}
+                        className="border border-gray-300 rounded-md px-2 py-1 text-sm w-full"
+                      />
+                    </td>
                     <td className="px-4 py-2">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                         u.status === 'verified' ? 'bg-green-100 text-green-700' :
@@ -203,6 +233,15 @@ export const Users = () => {
       </div>
 
       {error && (<div className="mt-4 text-rose-600 text-sm">{error}</div>)}
+
+      {/* Role Manager Modal */}
+      <RoleManager
+        isOpen={showRoleManager}
+        onClose={() => setShowRoleManager(false)}
+        onRoleUpdated={() => {
+          setRefrshFlag((prev)=>!prev)
+        }}
+      />
     </div>
   )
 }

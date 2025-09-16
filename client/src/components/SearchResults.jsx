@@ -9,14 +9,14 @@ const SearchResults = ({ query, data, onPick }) => {
 
   if (filtered.length === 0) {
     return (
-      <div className="absolute left-0 top-full mt-2 w-[32rem] bg-white border rounded-lg shadow-lg p-4 text-sm text-gray-500">
+      <div className="absolute left-0 top-full mt-2 w-[32rem] border-gray-300 bg-white border rounded-lg shadow-lg p-4 text-sm text-gray-500">
         No options found
       </div>
     )
   }
 
   return (
-    <div className="absolute left-0 top-full mt-2 w-[32rem] bg-white border rounded-lg shadow-lg p-2 max-h-80 overflow-auto">
+    <div className="absolute left-2 md:left-20 top-full mt-2 w-[32rem] bg-white border border-gray-300 rounded-lg shadow-lg p-2 max-h-80 overflow-auto">
       {filtered.map((opt) => (
         <button
           key={opt.key}

@@ -1,6 +1,16 @@
-import { http } from '../lib/apiClient';
+import { http } from '../lib/apiClient.js';
 
-export const UsersService = {
+export const usersService = {
+  getAllUsers: async (params = { page: 1, limit: 10 }) => {
+    try {
+      const response = await http.get('/users', { params });
+      return response;
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      throw error;
+    }
+  },
+
   list: async (params = { page: 1, limit: 10 }) => {
     const res = await http.get('/users', { params });
     // API returns { success, message, data: { rows, total } }
@@ -23,4 +33,6 @@ export const UsersService = {
   },
 };
 
-export default UsersService;
+// Keep both exports for backward compatibility
+export const UsersService = usersService;
+export default usersService;

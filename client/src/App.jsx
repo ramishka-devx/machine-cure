@@ -6,6 +6,11 @@ import Register from './pages/Register'
 import DashboardLayout from './layouts/DashboardLayout'
 import Machines from './pages/machines/Machines'
 import { Users } from './pages/users/Users'
+import Divisions from './pages/divisions/Divisions'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Kaizens from './pages/kaizens/Kaizens'
+import { Breakdowns } from './pages/breakdowns/Breakdowns'
 
 function App() {
 
@@ -21,15 +26,18 @@ function App() {
           <Route path="machines" element={<Machines />} />
           {/* Placeholder routes for future pages */}
           <Route path="records" element={<div className='p-6'>Records</div>} />
+          <Route path="divisions" element={<Divisions/>} />
           <Route path="maintenance" element={<div className='p-6'>Maintenance</div>} />
-          <Route path="breakdown" element={<div className='p-6'>Breakdown</div>} />
-          <Route path="kaizen" element={<div className='p-6'>Kaizen</div>} />
+          <Route path="breakdown" element={<Breakdowns/>} />
+          <Route path="kaizen" element={<Kaizens/>} />
+          <Route path="kaizens" element={<Kaizens/>} />
           <Route path="users" element={<Users/>} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
      </BrowserRouter>
+     <ToastContainer/>
     </>
   )
 }

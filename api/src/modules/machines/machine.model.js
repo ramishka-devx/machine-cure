@@ -8,16 +8,16 @@ export const MachineModel = {
   async list({ page = 1, limit = 10, division_id, q } = {}) {
     const where = [];
     const params = [];
-    if (division_id !== undefined) { where.push('division_id = ?'); params.push(division_id); }
-    if (q) { where.push('title LIKE ?'); params.push(`%${q}%`); }
+    if (division_id !== undefined) { where.push('m.division_id = ?'); params.push(division_id); }
+    if (q) { where.push('m.title LIKE ?'); params.push(`%${q}%`); }
     const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
     const offset = (Number(page) - 1) * Number(limit);
     const rows = await query(
-      `SELECT * FROM machines ${whereSql} ORDER BY machine_id DESC LIMIT ? OFFSET ?`,
+      `SELECT m.machine_id, m.title, d.division_id , d.title as division FROM machines m JOIN divisions d ON d.division_id = m.division_id ${whereSql} ORDER BY m.machine_id DESC LIMIT ? OFFSET ?`,
       [...params, Number(limit), Number(offset)]
     );
     const [{ count }] = await query(
-      `SELECT COUNT(*) as count FROM machines ${whereSql}`,
+      `SELECT COUNT(*) as count FROM machines m ${whereSql}`,
       params
     );
     return { rows, total: count, page: Number(page), limit: Number(limit) };

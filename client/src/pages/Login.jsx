@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthService } from '../services/auth'
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const navigate = useNavigate()
@@ -13,7 +14,7 @@ const Login = () => {
     e.preventDefault()
     setError('')
     if (!email || !password) {
-      setError('Email and password are required')
+      toast.error('Email and password are required')
       return
     }
     try {
@@ -21,7 +22,8 @@ const Login = () => {
       await AuthService.login({ email, password })
       navigate('/dashboard')
     } catch (err) {
-      setError(err?.message || 'Login failed')
+      toast.error(err?.message || 'Login failed')
+      
     } finally {
       setLoading(false)
     }
