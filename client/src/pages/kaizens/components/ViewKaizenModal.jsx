@@ -322,7 +322,7 @@ const ViewKaizenModal = ({ isOpen, onClose, kaizen }) => {
                   />
                 </div>
                 <div className="flex items-center justify-between">
-                  <label className="flex items-center">
+                  <label className="flex items-center hidden">
                     <input
                       type="checkbox"
                       checked={isInternalComment}
