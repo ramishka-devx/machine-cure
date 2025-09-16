@@ -79,8 +79,8 @@ const AssignKaizenModal = ({ isOpen, onClose, kaizen, onKaizenAssigned }) => {
   const selectedUser = users.find(u => u.user_id == formData.assigned_to);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+    <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex  justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full  overflow-auto my-5">
         <div className="flex justify-between items-center p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">Assign Kaizen</h2>
           <button
@@ -173,7 +173,7 @@ const AssignKaizenModal = ({ isOpen, onClose, kaizen, onKaizenAssigned }) => {
               </p>
               {kaizen.estimated_cost > 0 && (
                 <p className="text-sm text-yellow-700">
-                  <strong>Estimated Cost:</strong> ${kaizen.estimated_cost.toLocaleString()}
+                  <strong>Estimated Cost:</strong> LKR {kaizen.estimated_cost.toLocaleString()}
                 </p>
               )}
             </div>

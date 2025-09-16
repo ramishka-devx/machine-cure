@@ -46,14 +46,25 @@ const KaizenStats = () => {
   }
 
   const totalKaizens = stats.byStatus?.reduce((sum, status) => sum + status.count, 0) || 0;
-  const completedKaizens = stats.byStatus?.find(s => s.name.toLowerCase() === 'completed')?.count || 0;
-  const inProgressKaizens = stats.byStatus?.find(s => s.name.toLowerCase() === 'in progress')?.count || 0;
+  
+  // Look for completed status - try multiple variations
+  const completedKaizens = stats.byStatus?.find(s => {
+    const statusName = s.name.toLowerCase();
+    return statusName === 'completed' || statusName === 'approved' || statusName === 'done';
+  })?.count || 0;
+  
+  // Look for in progress status - try multiple variations  
+  const inProgressKaizens = stats.byStatus?.find(s => {
+    const statusName = s.name.toLowerCase();
+    return statusName === 'in progress' || statusName === 'pending' || statusName === 'active';
+  })?.count || 0;
+  
   const completionRate = totalKaizens > 0 ? ((completedKaizens / totalKaizens) * 100).toFixed(1) : 0;
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'LKR',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount || 0);
@@ -79,14 +90,14 @@ const KaizenStats = () => {
 
         {/* Completion Rate */}
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex items-center">
+          <div className="flex items-start">
             <div className="flex-1">
               <p className="text-sm font-medium text-gray-600">Completion Rate</p>
               <p className="text-2xl font-bold text-gray-900">{completionRate}%</p>
               <p className="text-xs text-gray-500">{completedKaizens} of {totalKaizens} completed</p>
             </div>
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -95,13 +106,13 @@ const KaizenStats = () => {
 
         {/* In Progress */}
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex items-center">
+          <div className="flex items-start">
             <div className="flex-1">
               <p className="text-sm font-medium text-gray-600">In Progress</p>
               <p className="text-2xl font-bold text-gray-900">{inProgressKaizens}</p>
             </div>
-            <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -122,8 +133,8 @@ const KaizenStats = () => {
                 </p>
               )}
             </div>
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
               </svg>
             </div>
@@ -180,14 +191,34 @@ const KaizenStats = () => {
 
 const getStatusColor = (statusName) => {
   switch (statusName.toLowerCase()) {
-    case 'completed': return 'bg-green-500';
-    case 'in progress': return 'bg-blue-500';
-    case 'approved': return 'bg-purple-500';
-    case 'under review': return 'bg-yellow-500';
-    case 'submitted': return 'bg-gray-500';
-    case 'rejected': return 'bg-red-500';
-    case 'on hold': return 'bg-orange-500';
-    default: return 'bg-gray-400';
+    case 'completed':
+    case 'approved': 
+    case 'done':
+      return 'bg-green-500';
+    case 'in progress':
+    case 'pending':
+    case 'active':
+      return 'bg-blue-500';
+    case 'under review': 
+    case 'reviewing':
+      return 'bg-yellow-500';
+    case 'submitted': 
+    case 'new':
+      return 'bg-gray-500';
+    case 'rejected':
+    case 'declined':
+    case 'denied':
+      return 'bg-red-500';
+    case 'on hold':
+    case 'paused':
+      return 'bg-orange-500';
+    case 'testing':
+      return 'bg-purple-500';
+    case 'cancelled':
+    case 'canceled':
+      return 'bg-gray-600';
+    default: 
+      return 'bg-gray-400';
   }
 };
 

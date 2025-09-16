@@ -25,11 +25,11 @@ export const KaizenModel = {
 
     const result = await query(sql, [
       title, description, problem_statement, proposed_solution, expected_benefits,
-      implementation_plan, category_id, submittedStatus.status_id, priority, submitted_by,
+      implementation_plan, category_id, 1 , priority, submitted_by,
       machine_id, division_id, estimated_cost, estimated_savings, estimated_implementation_days
     ]);
 
-    return { kaizen_id: result.insertId, ...kaizenData, status_id: submittedStatus.status_id };
+    return { kaizen_id: result.insertId, ...kaizenData, status_id: 1 };
   },
 
   async list({ page = 1, limit = 10, status_id, category_id, submitted_by, assigned_to, machine_id, division_id, priority, q } = {}) {
@@ -244,6 +244,19 @@ export const KaizenModel = {
       GROUP BY ks.status_id, ks.name
       ORDER BY ks.sort_order
     `);
+
+    // Also get actual counts for debugging
+    const actualCounts = await query(`
+      SELECT ks.name, COUNT(k.kaizen_id) as actual_count
+      FROM kaizens k
+      RIGHT JOIN kaizen_statuses ks ON k.status_id = ks.status_id
+      GROUP BY ks.status_id, ks.name
+      ORDER BY ks.sort_order
+    `);
+
+    // Get total count of kaizens
+    const [totalCount] = await query('SELECT COUNT(*) as total FROM kaizens');
+    stats.totalKaizens = totalCount.total;
 
     // Total savings
     const [savings] = await query(`
