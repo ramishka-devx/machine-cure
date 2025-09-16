@@ -5,6 +5,79 @@ import { divisionsService } from '../../../services/divisions.js';
 import BreakdownDetail from './BreakdownDetail';
 import FilterModal from './FilterModal';
 
+// Table Loading Skeleton Component
+const TableLoadingSkeleton = () => {
+  return (
+    <>
+      {/* Table Rows */}
+      {Array.from({ length: 8 }).map((_, index) => (
+        <tr key={index} className="hover:bg-gray-50 animate-pulse">
+          {/* ID */}
+          <td className="p-2 md:p-3 border-b border-gray-200 align-top">
+            <div className="h-4 bg-gray-200 rounded w-12"></div>
+          </td>
+          
+          {/* Title */}
+          <td className="p-2 md:p-3 border-b border-gray-200 align-top">
+            <div className="space-y-1">
+              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+            </div>
+          </td>
+          
+          {/* Machine */}
+          <td className="p-2 md:p-3 border-b border-gray-200 align-top">
+            <div className="space-y-1">
+              <div className="h-4 bg-gray-200 rounded w-full"></div>
+              <div className="h-3 bg-gray-100 rounded w-2/3"></div>
+            </div>
+          </td>
+          
+          {/* Category */}
+          <td className="p-2 md:p-3 border-b border-gray-200 align-top">
+            <div className="h-4 bg-gray-200 rounded w-20"></div>
+          </td>
+          
+          {/* Severity Badge */}
+          <td className="p-2 md:p-3 border-b border-gray-200 align-top">
+            <div className="h-6 bg-gray-200 rounded-full w-16"></div>
+          </td>
+          
+          {/* Status Badge */}
+          <td className="p-2 md:p-3 border-b border-gray-200 align-top">
+            <div className="h-6 bg-gray-200 rounded-full w-20"></div>
+          </td>
+          
+          {/* Reported Date */}
+          <td className="p-2 md:p-3 border-b border-gray-200 align-top">
+            <div className="h-4 bg-gray-200 rounded w-24"></div>
+          </td>
+          
+          {/* Duration */}
+          <td className="p-2 md:p-3 border-b border-gray-200 align-top">
+            <div className="h-4 bg-gray-200 rounded w-16"></div>
+          </td>
+          
+          {/* Assigned To */}
+          <td className="p-2 md:p-3 border-b border-gray-200 align-top">
+            <div className="space-y-1">
+              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              <div className="h-3 bg-gray-100 rounded w-1/2"></div>
+            </div>
+          </td>
+          
+          {/* Actions */}
+          <td className="p-2 md:p-3 border-b border-gray-200 align-top">
+            <div className="flex gap-1">
+              <div className="h-8 w-12 bg-gray-200 rounded"></div>
+              <div className="h-8 w-12 bg-gray-200 rounded"></div>
+            </div>
+          </td>
+        </tr>
+      ))}
+    </>
+  );
+};
+
 const BreakdownList = ({ refreshTrigger }) => {
   const [breakdowns, setBreakdowns] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -119,21 +192,17 @@ const BreakdownList = ({ refreshTrigger }) => {
   };
 
   const handleStatusUpdate = async (breakdownId, newStatusId) => {
-    if (!newStatusId) return; // Don't process empty selections
+    if (!newStatusId) return;
     
     try {
       setLoading(true);
       await breakdownService.updateBreakdownStatus(breakdownId, newStatusId);
-      await loadBreakdowns(pagination.page); // Refresh current page
+      await loadBreakdowns(pagination.page);
       setMessage({ type: 'success', text: 'Status updated successfully!' });
-      
-      // Clear message after 3 seconds
       setTimeout(() => setMessage({ type: '', text: '' }), 3000);
     } catch (error) {
       console.error('Error updating status:', error);
       setMessage({ type: 'error', text: 'Error updating status. Please try again.' });
-      
-      // Clear message after 5 seconds
       setTimeout(() => setMessage({ type: '', text: '' }), 5000);
     } finally {
       setLoading(false);
@@ -167,12 +236,10 @@ const BreakdownList = ({ refreshTrigger }) => {
 
   const formatDuration = (startTime, endTime) => {
     if (!endTime) return 'Ongoing';
-    
     const start = new Date(startTime);
     const end = new Date(endTime);
     const diffMs = end - start;
     const diffHours = diffMs / (1000 * 60 * 60);
-    
     if (diffHours < 24) {
       return `${diffHours.toFixed(1)} hours`;
     } else {
@@ -193,7 +260,6 @@ const BreakdownList = ({ refreshTrigger }) => {
   };
 
   const handleModalStatusUpdate = () => {
-    // Refresh the list when status is updated from modal
     loadBreakdowns(pagination.page);
   };
 
@@ -212,8 +278,7 @@ const BreakdownList = ({ refreshTrigger }) => {
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-lg">
-      
+    <div className="bg-white px-2 rounded-lg ">
       {/* Success/Error Messages */}
       {message.text && (
         <div className={`p-3 mb-5 rounded-md font-medium border animate-in slide-in-from-top-2 duration-300 ${
@@ -224,7 +289,7 @@ const BreakdownList = ({ refreshTrigger }) => {
           {message.text}
         </div>
       )}
-      
+
       {/* Filters Button */}
       <div className="mb-6 flex justify-between items-center">
         <button
@@ -236,8 +301,7 @@ const BreakdownList = ({ refreshTrigger }) => {
           </svg>
           Filters & Search
         </button>
-        
-        {/* Active Filters Count */}
+
         {Object.values(filters).some(value => value && value !== 'created_at' && value !== 'desc') && (
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
             {Object.values(filters).filter(value => value && value !== 'created_at' && value !== 'desc').length} active filters
@@ -258,13 +322,35 @@ const BreakdownList = ({ refreshTrigger }) => {
         categories={categories}
       />
 
-      {/* Loading */}
-      {loading && <div className="text-center py-10 text-gray-600 text-base">Loading breakdowns...</div>}
+      {/* Loading Table Skeleton */}
+      {loading && (
+        <div className="overflow-x-auto mb-5">
+          <table className="min-w-full border-collapse bg-white text-sm md:text-base">
+            <thead>
+              <tr>
+                <th className="bg-gray-50 p-2 md:p-3 text-left font-semibold text-gray-700 border-b-2 border-gray-200 whitespace-nowrap">ID</th>
+                <th className="bg-gray-50 p-2 md:p-3 text-left font-semibold text-gray-700 border-b-2 border-gray-200 whitespace-nowrap">Title</th>
+                <th className="bg-gray-50 p-2 md:p-3 text-left font-semibold text-gray-700 border-b-2 border-gray-200 whitespace-nowrap">Machine</th>
+                <th className="bg-gray-50 p-2 md:p-3 text-left font-semibold text-gray-700 border-b-2 border-gray-200 whitespace-nowrap">Category</th>
+                <th className="bg-gray-50 p-2 md:p-3 text-left font-semibold text-gray-700 border-b-2 border-gray-200 whitespace-nowrap">Severity</th>
+                <th className="bg-gray-50 p-2 md:p-3 text-left font-semibold text-gray-700 border-b-2 border-gray-200 whitespace-nowrap">Status</th>
+                <th className="bg-gray-50 p-2 md:p-3 text-left font-semibold text-gray-700 border-b-2 border-gray-200 whitespace-nowrap">Reported</th>
+                <th className="bg-gray-50 p-2 md:p-3 text-left font-semibold text-gray-700 border-b-2 border-gray-200 whitespace-nowrap">Duration</th>
+                <th className="bg-gray-50 p-2 md:p-3 text-left font-semibold text-gray-700 border-b-2 border-gray-200 whitespace-nowrap">Assigned To</th>
+                <th className="bg-gray-50 p-2 md:p-3 text-left font-semibold text-gray-700 border-b-2 border-gray-200 whitespace-nowrap">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <TableLoadingSkeleton />
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Breakdowns Table */}
       {!loading && (
         <div className="overflow-x-auto mb-5">
-          <table className="w-full border-collapse bg-white text-sm md:text-base">
+          <table className="min-w-full border-collapse bg-white text-sm md:text-base">
             <thead>
               <tr>
                 <th className="bg-gray-50 p-2 md:p-3 text-left font-semibold text-gray-700 border-b-2 border-gray-200 whitespace-nowrap">ID</th>
@@ -289,9 +375,7 @@ const BreakdownList = ({ refreshTrigger }) => {
                   <tr key={breakdown.breakdown_id} className="hover:bg-gray-50">
                     <td className="p-2 md:p-3 border-b border-gray-200 align-top">#{breakdown.breakdown_id}</td>
                     <td className="p-2 md:p-3 border-b border-gray-200 align-top">
-                      <div className="font-semibold text-gray-700">
-                        {breakdown.title}
-                      </div>
+                      <div className="font-semibold text-gray-700">{breakdown.title}</div>
                     </td>
                     <td className="p-2 md:p-3 border-b border-gray-200 align-top">
                       <div className="text-gray-700">
@@ -316,9 +400,7 @@ const BreakdownList = ({ refreshTrigger }) => {
                         <small className="text-gray-600 text-xs">by {breakdown.reported_by?.first_name} {breakdown.reported_by?.last_name}</small>
                       </div>
                     </td>
-                    <td className="p-2 md:p-3 border-b border-gray-200 align-top">
-                      {formatDuration(breakdown.breakdown_start_time, breakdown.breakdown_end_time)}
-                    </td>
+                    <td className="p-2 md:p-3 border-b border-gray-200 align-top">{formatDuration(breakdown.breakdown_start_time, breakdown.breakdown_end_time)}</td>
                     <td className="p-2 md:p-3 border-b border-gray-200 align-top">
                       {breakdown.assigned_to ? (
                         `${breakdown.assigned_to.first_name} ${breakdown.assigned_to.last_name}`
@@ -334,7 +416,6 @@ const BreakdownList = ({ refreshTrigger }) => {
                         >
                           View
                         </button>
-                        
                         <select
                           onChange={(e) => handleStatusUpdate(breakdown.breakdown_id, e.target.value)}
                           value=""
@@ -373,8 +454,7 @@ const BreakdownList = ({ refreshTrigger }) => {
           </button>
           
           <span className="text-gray-600 text-sm">
-            Page {pagination.page} of {pagination.totalPages} 
-            ({pagination.total} total results)
+            Page {pagination.page} of {pagination.totalPages} ({pagination.total} total results)
           </span>
           
           <button

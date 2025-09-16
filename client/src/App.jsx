@@ -29,8 +29,11 @@ function App() {
           <Route path="records" element={<div className='p-6'>Records</div>} />
           <Route path="divisions" element={<Divisions/>} />
           <Route path="maintenance" element={<Maintenance/>} />
+          <Route path="maintenance/new" element={<Maintenance/>} />
           <Route path="breakdown" element={<Breakdowns/>} />
+          <Route path="breakdown/new" element={<Breakdowns/>} />
           <Route path="kaizen" element={<Kaizens/>} />
+          <Route path="kaizen/new" element={<Kaizens/>} />
           <Route path="kaizens" element={<Kaizens/>} />
           <Route path="users" element={<Users/>} />
         </Route>

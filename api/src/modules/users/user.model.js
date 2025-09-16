@@ -14,7 +14,7 @@ export const UserModel = {
     return rows[0];
   },
   async findById(user_id) {
-    const rows = await query('SELECT user_id, first_name, last_name, email, role_id, status, created_at, updated_at FROM users WHERE user_id = ? LIMIT 1', [user_id]);
+    const rows = await query('SELECT u.user_id, u.first_name, u.last_name, u.email, u.role_id, u.status, r.name as role, u.profileImg, u.created_at, u.updated_at FROM users u JOIN roles r ON r.role_id = u.role_id WHERE u.user_id = ? LIMIT 1', [user_id]);
     return rows[0];
   },
   async list({ page = 1, limit = 10 }) {

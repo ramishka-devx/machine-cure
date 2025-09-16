@@ -1,6 +1,8 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { navItems } from "../lib/navItems";
+import logo from '../assets/logo.png'
+
 const Sidebar = ({ onNavigate, collapsed = false }) => {
   const navigate = useNavigate();
   const handleLogout = ()=>
@@ -26,7 +28,7 @@ const Sidebar = ({ onNavigate, collapsed = false }) => {
           }`}
         >
           <div className="h-10 w-10 flex items-center justify-center text-white rounded-xl shadow-sm">
-            <img src="/logo.png" alt="" />
+            <img src={logo} alt="" />
           </div>
           <div
             className={`overflow-hidden transition-all duration-300 ease-in-out ${

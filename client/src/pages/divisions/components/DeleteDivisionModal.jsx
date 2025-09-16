@@ -24,7 +24,7 @@ const DeleteDivisionModal = ({ isOpen, onClose, onDivisionDeleted, division }) =
 
       const response = await divisionsService.deleteDivision(division.division_id);
 
-      if (response.success) {
+      if (response== '') {
         // Notify parent component
         onDivisionDeleted(division);
       } else {

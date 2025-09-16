@@ -29,8 +29,8 @@ const DeleteDivisionTypeModal = ({ isOpen, onClose, onDivisionTypeDeleted, divis
 
       const response = await divisionTypesService.deleteDivisionType(divisionType.division_type_id);
 
-      if (response.success) {
-        // Notify parent component
+      console.log(response)
+      if (response == '') {
         onDivisionTypeDeleted(divisionType);
       } else {
         setError(response.message || 'Failed to delete division type');

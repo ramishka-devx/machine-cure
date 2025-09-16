@@ -187,6 +187,61 @@ export const breakdownService = {
       console.error('Error adding breakdown repair:', error);
       throw error;
     }
+  },
+
+  // Update breakdown repair
+  updateBreakdownRepair: async (repairId, repairData) => {
+    try {
+      const response = await http.put(`/repairs/${repairId}`, repairData);
+      return response;
+    } catch (error) {
+      console.error('Error updating breakdown repair:', error);
+      throw error;
+    }
+  },
+
+  // Start breakdown repair
+  startBreakdownRepair: async (repairId) => {
+    try {
+      const response = await http.patch(`/repairs/${repairId}/start`);
+      return response;
+    } catch (error) {
+      console.error('Error starting breakdown repair:', error);
+      throw error;
+    }
+  },
+
+  // Complete breakdown repair
+  completeBreakdownRepair: async (repairId, completionData = {}) => {
+    try {
+      const response = await http.patch(`/repairs/${repairId}/complete`, completionData);
+      return response;
+    } catch (error) {
+      console.error('Error completing breakdown repair:', error);
+      throw error;
+    }
+  },
+
+  // Delete breakdown repair
+  deleteBreakdownRepair: async (repairId) => {
+    try {
+      const response = await http.delete(`/repairs/${repairId}`);
+      return response;
+    } catch (error) {
+      console.error('Error deleting breakdown repair:', error);
+      throw error;
+    }
+  },
+
+  // Get single breakdown repair by ID
+  getBreakdownRepairById: async (repairId) => {
+    try {
+      const response = await http.get(`/repairs/${repairId}`);
+      return response;
+    } catch (error) {
+      console.error('Error fetching breakdown repair:', error);
+      throw error;
+    }
   }
 };
 

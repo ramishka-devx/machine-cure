@@ -194,7 +194,7 @@ const Machines = () => {
       setOperationLoading(true)
       const response = await machinesService.deleteMachine(selectedMachine.machine_id)
 
-      if (response.success || response.status === 204) {
+      if (response.success || response == '') {
         closeModals()
         fetchMachines() // Refresh the list
       } else {
@@ -264,8 +264,45 @@ const Machines = () => {
 
       {/* Loading State */}
       {loading && (
-        <div className="flex justify-center items-center py-12">
-          <div className="text-gray-500">Loading machines...</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
+          {[...Array(6)].map((_, index) => (
+            <div key={index} className="bg-white rounded-lg border border-gray-200 p-6 animate-pulse">
+              {/* Header Section */}
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex-1">
+                  <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                </div>
+                <div className="ml-4">
+                  <div className="h-8 w-8 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+
+              {/* Division Info */}
+              <div className="mb-4">
+                <div className="h-4 bg-gray-200 rounded w-2/3 mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+              </div>
+
+              {/* Metadata */}
+              <div className="mb-4 space-y-2">
+                <div className="flex justify-between">
+                  <div className="h-3 bg-gray-200 rounded w-16"></div>
+                  <div className="h-3 bg-gray-200 rounded w-20"></div>
+                </div>
+                <div className="flex justify-between">
+                  <div className="h-3 bg-gray-200 rounded w-20"></div>
+                  <div className="h-3 bg-gray-200 rounded w-24"></div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end space-x-2">
+                <div className="h-8 w-16 bg-gray-200 rounded"></div>
+                <div className="h-8 w-16 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 

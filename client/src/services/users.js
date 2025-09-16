@@ -16,6 +16,11 @@ export const usersService = {
     // API returns { success, message, data: { rows, total } }
     return res?.data ?? res; // return { rows, total }
   },
+  me: async () => {
+    const res = await http.get('/users/me');
+    // API returns { success, message, data: <user> }
+    return res?.data ?? res;
+  },
   analytics: async () => {
     const res = await http.get('/users/analytics');
     // API returns { success, message, data: { total, verified, pending, deleted } }

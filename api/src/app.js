@@ -28,6 +28,7 @@ import breakdownRepairRoutes from './modules/breakdownRepairs/breakdownRepair.ro
 import breakdownCommentRoutes from './modules/breakdownComments/breakdownComment.routes.js';
 import breakdownAttachmentRoutes from './modules/breakdownAttachments/breakdownAttachment.routes.js';
 import breakdownAnalyticsRoutes from './modules/breakdownAnalytics/breakdownAnalytics.routes.js';
+import dashboardRoutes from './modules/dashboard/dashboard.routes.js';
 
 const app = express();
 
@@ -60,6 +61,8 @@ app.use('/api', breakdownRepairRoutes);  // Uses nested routes like /api/breakdo
 app.use('/api', breakdownCommentRoutes); // Uses nested routes like /api/breakdown/:id/comments
 app.use('/api', breakdownAttachmentRoutes); // Uses nested routes like /api/breakdown/:id/attachments
 app.use('/api/analytics/breakdowns', breakdownAnalyticsRoutes);
+
+app.use('/api/dashboard', dashboardRoutes);
 
 // Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

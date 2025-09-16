@@ -258,13 +258,6 @@ const Maintenance = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -283,7 +276,7 @@ const Maintenance = () => {
   }
 
   return (
-    <div className="space-y-6 px-6 py-6">
+    <div className="space-y-6 px-8 py-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -436,21 +429,84 @@ const Maintenance = () => {
       </div>
 
       {/* Maintenance Records Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {maintenanceRecords.map((maintenance) => (
-          <MaintenanceCard
-            key={maintenance.maintenance_id}
-            maintenance={maintenance}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onStatusUpdate={handleStatusUpdate}
-            loading={operationLoading}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, index) => (
+            <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 animate-pulse">
+              {/* Header with badges skeleton */}
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex-1">
+                  <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+                  <div className="flex flex-wrap gap-2">
+                    <div className="h-5 bg-gray-200 rounded-full w-16"></div>
+                    <div className="h-5 bg-gray-200 rounded-full w-14"></div>
+                    <div className="h-5 bg-gray-200 rounded-full w-18"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Machine Info skeleton */}
+              <div className="mb-4 space-y-2">
+                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              </div>
+
+              {/* Description skeleton */}
+              <div className="mb-4 space-y-2">
+                <div className="h-4 bg-gray-200 rounded w-full"></div>
+                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              </div>
+
+              {/* Dates skeleton */}
+              <div className="mb-4 space-y-2">
+                <div className="flex justify-between">
+                  <div className="h-3 bg-gray-200 rounded w-16"></div>
+                  <div className="h-3 bg-gray-200 rounded w-24"></div>
+                </div>
+                <div className="flex justify-between">
+                  <div className="h-3 bg-gray-200 rounded w-12"></div>
+                  <div className="h-3 bg-gray-200 rounded w-24"></div>
+                </div>
+              </div>
+
+              {/* Duration and Cost skeleton */}
+              <div className="mb-4 space-y-2">
+                <div className="flex justify-between">
+                  <div className="h-3 bg-gray-200 rounded w-20"></div>
+                  <div className="h-3 bg-gray-200 rounded w-16"></div>
+                </div>
+                <div className="flex justify-between">
+                  <div className="h-3 bg-gray-200 rounded w-16"></div>
+                  <div className="h-3 bg-gray-200 rounded w-20"></div>
+                </div>
+              </div>
+
+              {/* Actions skeleton */}
+              <div className="flex justify-end space-x-2">
+                <div className="h-8 w-16 bg-gray-200 rounded"></div>
+                <div className="h-8 w-16 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {maintenanceRecords.map((maintenance) => (
+            <MaintenanceCard
+              key={maintenance.maintenance_id}
+              maintenance={maintenance}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onStatusUpdate={handleStatusUpdate}
+              loading={operationLoading}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Empty State */}
-      {maintenanceRecords.length === 0 && (
+      {!loading && maintenanceRecords.length === 0 && (
         <div className="text-center py-12">
           <div className="text-gray-500 text-lg">
             No maintenance records found

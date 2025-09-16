@@ -1,7 +1,21 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { FiChevronLeft, FiChevronRight, FiSearch, FiBell, FiMenu } from 'react-icons/fi'
+import { usersService } from '../services/users.js'
 
 const Topbar = ({ query, setQuery, onBack, onMenu, collapsed = false }) => {
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await usersService.me()
+        setUser(userData)
+      } catch (error) {
+        console.error('Error fetching user data:', error)
+      }
+    }
+    fetchUser()
+  }, [])
   return (
     <header className="h-16 border-b border-b-gray-200 bg-white flex items-center justify-between px-3 sm:px-5">
       <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -28,10 +42,14 @@ const Topbar = ({ query, setQuery, onBack, onMenu, collapsed = false }) => {
           <span className="absolute -top-1 -right-1 h-4 w-4 text-[10px] bg-rose-500 text-white rounded-full flex items-center justify-center">2</span>
         </button>
         <div className="flex items-center gap-2">
-          <img className="h-9 w-9 rounded-full" src="https://i.pravatar.cc/100" />
+          <img className="h-9 w-9 rounded-full" src={user?.profileImg} />
           <div className="leading-tight hidden sm:block">
-            <div className="text-sm font-medium">Ramishka Geenath</div>
-            <div className="text-xs text-gray-500">Engineer</div>
+            <div className="text-sm font-medium">
+              {user ? `${user.first_name} ${user.last_name}` : 'Loading...'}
+            </div>
+            <div className="text-xs text-gray-500">
+              {user?.role}
+            </div>
           </div>
         </div>
       </div>
