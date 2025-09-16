@@ -47,8 +47,11 @@ export const navItems = [
     to: '/dashboard/maintenance',
     icon: FiTool,
     children: [
-      { key: 'maintenance-schedule', label: 'Schedules', to: '/dashboard/maintenance' },
-      { key: 'maintenance-requests', label: 'Requests', to: '/dashboard/maintenance' },
+      { key: 'maintenance-overview', label: 'Overview', to: '/dashboard/maintenance' },
+      { key: 'maintenance-types', label: 'Types', to: '/dashboard/maintenance?tab=types' },
+      { key: 'maintenance-schedules', label: 'Schedules', to: '/dashboard/maintenance?tab=schedules' },
+      { key: 'maintenance-records', label: 'Work Orders', to: '/dashboard/maintenance?tab=records' },
+      { key: 'maintenance-parts', label: 'Parts Inventory', to: '/dashboard/maintenance?tab=parts' },
     ],
   },
   {

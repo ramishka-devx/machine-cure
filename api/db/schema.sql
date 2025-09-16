@@ -281,3 +281,175 @@ CREATE INDEX IF NOT EXISTS idx_breakdowns_reported_by ON machine_breakdowns(repo
 CREATE INDEX IF NOT EXISTS idx_breakdowns_assigned_to ON machine_breakdowns(assigned_to);
 CREATE INDEX IF NOT EXISTS idx_repairs_breakdown ON breakdown_repairs(breakdown_id);
 CREATE INDEX IF NOT EXISTS idx_breakdown_comments_breakdown ON breakdown_comments(breakdown_id);
+
+-- Maintenance Management Tables
+
+CREATE TABLE IF NOT EXISTS maintenance_types (
+  maintenance_type_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE,
+  description TEXT,
+  default_frequency_days INT NOT NULL,
+  estimated_duration_hours DECIMAL(5,2) DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS maintenance_schedules (
+  schedule_id INT AUTO_INCREMENT PRIMARY KEY,
+  machine_id INT NOT NULL,
+  maintenance_type_id INT NOT NULL,
+  frequency_days INT NOT NULL,
+  next_due_date DATE NOT NULL,
+  last_completed_date DATE NULL,
+  is_active BOOLEAN DEFAULT TRUE,
+  assigned_to INT NULL,
+  created_by INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (machine_id) REFERENCES machines(machine_id),
+  FOREIGN KEY (maintenance_type_id) REFERENCES maintenance_types(maintenance_type_id),
+  FOREIGN KEY (assigned_to) REFERENCES users(user_id),
+  FOREIGN KEY (created_by) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS maintenance_statuses (
+  status_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL UNIQUE,
+  description TEXT,
+  sort_order INT DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS maintenance_records (
+  maintenance_id INT AUTO_INCREMENT PRIMARY KEY,
+  machine_id INT NOT NULL,
+  maintenance_type_id INT NOT NULL,
+  schedule_id INT NULL,
+  title VARCHAR(200) NOT NULL,
+  description TEXT,
+  status_id INT NOT NULL,
+  priority ENUM('low', 'medium', 'high', 'critical') DEFAULT 'medium',
+  scheduled_date DATE NOT NULL,
+  estimated_duration_hours DECIMAL(5,2) DEFAULT 0,
+  actual_duration_hours DECIMAL(5,2) NULL,
+  estimated_cost DECIMAL(10,2) DEFAULT 0,
+  actual_cost DECIMAL(10,2) NULL,
+  assigned_to INT NULL,
+  performed_by INT NULL,
+  started_at TIMESTAMP NULL,
+  completed_at TIMESTAMP NULL,
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (machine_id) REFERENCES machines(machine_id),
+  FOREIGN KEY (maintenance_type_id) REFERENCES maintenance_types(maintenance_type_id),
+  FOREIGN KEY (schedule_id) REFERENCES maintenance_schedules(schedule_id),
+  FOREIGN KEY (status_id) REFERENCES maintenance_statuses(status_id),
+  FOREIGN KEY (assigned_to) REFERENCES users(user_id),
+  FOREIGN KEY (performed_by) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS parts (
+  part_id INT AUTO_INCREMENT PRIMARY KEY,
+  part_number VARCHAR(100) NOT NULL UNIQUE,
+  name VARCHAR(200) NOT NULL,
+  description TEXT,
+  unit_price DECIMAL(10,2) DEFAULT 0,
+  supplier VARCHAR(200),
+  category VARCHAR(100),
+  minimum_stock_level INT DEFAULT 0,
+  current_stock_level INT DEFAULT 0,
+  unit VARCHAR(50),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS maintenance_parts_used (
+  usage_id INT AUTO_INCREMENT PRIMARY KEY,
+  maintenance_id INT NOT NULL,
+  part_id INT NOT NULL,
+  quantity_used INT NOT NULL,
+  unit_cost DECIMAL(10,2) DEFAULT 0,
+  notes TEXT,
+  FOREIGN KEY (maintenance_id) REFERENCES maintenance_records(maintenance_id) ON DELETE CASCADE,
+  FOREIGN KEY (part_id) REFERENCES parts(part_id)
+);
+
+CREATE TABLE IF NOT EXISTS machine_parts (
+  machine_id INT NOT NULL,
+  part_id INT NOT NULL,
+  recommended_stock_level INT DEFAULT 0,
+  PRIMARY KEY (machine_id, part_id),
+  FOREIGN KEY (machine_id) REFERENCES machines(machine_id) ON DELETE CASCADE,
+  FOREIGN KEY (part_id) REFERENCES parts(part_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS maintenance_procedures (
+  procedure_id INT AUTO_INCREMENT PRIMARY KEY,
+  maintenance_type_id INT NOT NULL,
+  title VARCHAR(200) NOT NULL,
+  description TEXT,
+  steps JSON NOT NULL,
+  safety_notes TEXT,
+  required_tools TEXT,
+  estimated_time_minutes INT DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (maintenance_type_id) REFERENCES maintenance_types(maintenance_type_id)
+);
+
+CREATE TABLE IF NOT EXISTS maintenance_checklist_items (
+  item_id INT AUTO_INCREMENT PRIMARY KEY,
+  maintenance_id INT NOT NULL,
+  procedure_id INT NOT NULL,
+  step_number INT NOT NULL,
+  description TEXT NOT NULL,
+  is_completed BOOLEAN DEFAULT FALSE,
+  completed_by INT NULL,
+  completed_at TIMESTAMP NULL,
+  notes TEXT,
+  FOREIGN KEY (maintenance_id) REFERENCES maintenance_records(maintenance_id) ON DELETE CASCADE,
+  FOREIGN KEY (procedure_id) REFERENCES maintenance_procedures(procedure_id),
+  FOREIGN KEY (completed_by) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS maintenance_comments (
+  comment_id INT AUTO_INCREMENT PRIMARY KEY,
+  maintenance_id INT NOT NULL,
+  user_id INT NOT NULL,
+  comment TEXT NOT NULL,
+  is_internal BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (maintenance_id) REFERENCES maintenance_records(maintenance_id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS maintenance_attachments (
+  attachment_id INT AUTO_INCREMENT PRIMARY KEY,
+  maintenance_id INT NOT NULL,
+  filename VARCHAR(255) NOT NULL,
+  original_filename VARCHAR(255) NOT NULL,
+  file_path VARCHAR(500) NOT NULL,
+  file_size INT NOT NULL,
+  mime_type VARCHAR(100) NOT NULL,
+  uploaded_by INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (maintenance_id) REFERENCES maintenance_records(maintenance_id) ON DELETE CASCADE,
+  FOREIGN KEY (uploaded_by) REFERENCES users(user_id)
+);
+
+-- Indexes for maintenance tables
+CREATE INDEX IF NOT EXISTS idx_maintenance_schedules_machine ON maintenance_schedules(machine_id);
+CREATE INDEX IF NOT EXISTS idx_maintenance_schedules_due_date ON maintenance_schedules(next_due_date);
+CREATE INDEX IF NOT EXISTS idx_maintenance_schedules_type ON maintenance_schedules(maintenance_type_id);
+CREATE INDEX IF NOT EXISTS idx_maintenance_records_machine ON maintenance_records(machine_id);
+CREATE INDEX IF NOT EXISTS idx_maintenance_records_status ON maintenance_records(status_id);
+CREATE INDEX IF NOT EXISTS idx_maintenance_records_assigned_to ON maintenance_records(assigned_to);
+CREATE INDEX IF NOT EXISTS idx_maintenance_records_scheduled_date ON maintenance_records(scheduled_date);
+CREATE INDEX IF NOT EXISTS idx_maintenance_records_type ON maintenance_records(maintenance_type_id);
+CREATE INDEX IF NOT EXISTS idx_parts_part_number ON parts(part_number);
+CREATE INDEX IF NOT EXISTS idx_parts_category ON parts(category);
+CREATE INDEX IF NOT EXISTS idx_maintenance_parts_maintenance ON maintenance_parts_used(maintenance_id);
+CREATE INDEX IF NOT EXISTS idx_maintenance_parts_part ON maintenance_parts_used(part_id);
+CREATE INDEX IF NOT EXISTS idx_maintenance_comments_maintenance ON maintenance_comments(maintenance_id);
+CREATE INDEX IF NOT EXISTS idx_maintenance_checklist_maintenance ON maintenance_checklist_items(maintenance_id);

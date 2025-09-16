@@ -18,7 +18,7 @@ export const updateSchema = Joi.object({
 export const listQuerySchema = Joi.object({
   query: Joi.object({
     page: Joi.number().min(1).default(1),
-    limit: Joi.number().min(1).max(100).default(10),
+    limit: Joi.number().min(1).max(10000).default(10),
     division_id: Joi.number().integer(),
     q: Joi.string().max(100)
   })

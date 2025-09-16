@@ -137,7 +137,7 @@ const BreakdownDetail = ({ breakdownId, onClose, onStatusUpdate }) => {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex justify-center items-center z-50">
         <div className="bg-white rounded-lg shadow-xl max-w-lg w-11/12 max-h-90vh overflow-y-auto">
           <div className="text-center py-10 text-gray-600 text-base">Loading breakdown details...</div>
         </div>
@@ -168,8 +168,8 @@ const BreakdownDetail = ({ breakdownId, onClose, onStatusUpdate }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-11/12 max-h-90vh overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex justify-center py-5 z-50">
+      <div className="bg-white rounded-sm shadow-xl max-w-4xl w-11/12 max-h-90vh overflow-y-auto">
         <div className="flex justify-between items-center p-5 border-b border-gray-200">
           <h2 className="m-0 text-gray-700 text-xl font-semibold">Breakdown Details - #{breakdown.breakdown_id}</h2>
           <button onClick={onClose} className="bg-none border-none text-2xl cursor-pointer text-gray-600 p-0 w-8 h-8 flex items-center justify-center hover:text-gray-700">&times;</button>

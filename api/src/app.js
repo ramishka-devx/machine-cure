@@ -28,6 +28,12 @@ import breakdownCommentRoutes from './modules/breakdownComments/breakdownComment
 import breakdownAttachmentRoutes from './modules/breakdownAttachments/breakdownAttachment.routes.js';
 import breakdownAnalyticsRoutes from './modules/breakdownAnalytics/breakdownAnalytics.routes.js';
 
+// Maintenance routes
+import maintenanceTypeRoutes from './modules/maintenanceTypes/maintenanceType.routes.js';
+import maintenanceScheduleRoutes from './modules/maintenanceSchedules/maintenanceSchedule.routes.js';
+import maintenanceRecordRoutes from './modules/maintenanceRecords/maintenanceRecord.routes.js';
+import partRoutes from './modules/parts/part.routes.js';
+
 const app = express();
 
 // Security & basics
@@ -58,6 +64,12 @@ app.use('/api', breakdownRepairRoutes);  // Uses nested routes like /api/breakdo
 app.use('/api', breakdownCommentRoutes); // Uses nested routes like /api/breakdown/:id/comments
 app.use('/api', breakdownAttachmentRoutes); // Uses nested routes like /api/breakdown/:id/attachments
 app.use('/api/analytics/breakdowns', breakdownAnalyticsRoutes);
+
+// Maintenance management routes
+app.use('/api/maintenance-types', maintenanceTypeRoutes);
+app.use('/api/maintenance-schedules', maintenanceScheduleRoutes);
+app.use('/api/maintenance-records', maintenanceRecordRoutes);
+app.use('/api/parts', partRoutes);
 
 // Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
