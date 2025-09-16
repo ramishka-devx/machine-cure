@@ -11,6 +11,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Kaizens from './pages/kaizens/Kaizens'
 import { Breakdowns } from './pages/breakdowns/Breakdowns'
+import Maintenance from './pages/maintenance/Maintenance'
 
 function App() {
 
@@ -27,7 +28,7 @@ function App() {
           {/* Placeholder routes for future pages */}
           <Route path="records" element={<div className='p-6'>Records</div>} />
           <Route path="divisions" element={<Divisions/>} />
-          <Route path="maintenance" element={<div className='p-6'>Maintenance</div>} />
+          <Route path="maintenance" element={<Maintenance/>} />
           <Route path="breakdown" element={<Breakdowns/>} />
           <Route path="kaizen" element={<Kaizens/>} />
           <Route path="kaizens" element={<Kaizens/>} />

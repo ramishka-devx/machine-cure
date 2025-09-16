@@ -281,3 +281,37 @@ CREATE INDEX IF NOT EXISTS idx_breakdowns_reported_by ON machine_breakdowns(repo
 CREATE INDEX IF NOT EXISTS idx_breakdowns_assigned_to ON machine_breakdowns(assigned_to);
 CREATE INDEX IF NOT EXISTS idx_repairs_breakdown ON breakdown_repairs(breakdown_id);
 CREATE INDEX IF NOT EXISTS idx_breakdown_comments_breakdown ON breakdown_comments(breakdown_id);
+
+-- Maintenance Management Tables
+
+CREATE TABLE IF NOT EXISTS machine_maintenance (
+  maintenance_id INT AUTO_INCREMENT PRIMARY KEY,
+  machine_id INT NOT NULL,
+  title VARCHAR(200) NOT NULL,
+  description TEXT NOT NULL,
+  type ENUM('preventive', 'corrective', 'predictive', 'emergency', 'routine', 'overhaul') DEFAULT 'routine',
+  status ENUM('scheduled', 'in_progress', 'completed', 'cancelled', 'overdue') DEFAULT 'scheduled',
+  priority ENUM('low', 'medium', 'high', 'critical') DEFAULT 'medium',
+  scheduled_by INT NOT NULL,
+  estimated_duration_hours DECIMAL(5,2) DEFAULT 0,
+  actual_duration_hours DECIMAL(5,2) NULL,
+  estimated_cost DECIMAL(10,2) DEFAULT 0,
+  actual_cost DECIMAL(10,2) NULL,
+  scheduled_date TIMESTAMP NOT NULL,
+  due_date TIMESTAMP NULL,
+  started_at TIMESTAMP NULL,
+  completed_at TIMESTAMP NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (machine_id) REFERENCES machines(machine_id),
+  FOREIGN KEY (scheduled_by) REFERENCES users(user_id)
+);
+
+-- Maintenance Indexes
+CREATE INDEX IF NOT EXISTS idx_maintenance_machine ON machine_maintenance(machine_id);
+CREATE INDEX IF NOT EXISTS idx_maintenance_type ON machine_maintenance(type);
+CREATE INDEX IF NOT EXISTS idx_maintenance_status ON machine_maintenance(status);
+CREATE INDEX IF NOT EXISTS idx_maintenance_scheduled_by ON machine_maintenance(scheduled_by);
+CREATE INDEX IF NOT EXISTS idx_maintenance_assigned_to ON machine_maintenance(assigned_to);
+CREATE INDEX IF NOT EXISTS idx_maintenance_scheduled_date ON machine_maintenance(scheduled_date);
+CREATE INDEX IF NOT EXISTS idx_maintenance_due_date ON machine_maintenance(due_date);

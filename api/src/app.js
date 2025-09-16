@@ -18,6 +18,7 @@ import machineRoutes from './modules/machines/machine.routes.js';
 import meterRoutes from './modules/meters/meter.routes.js';
 import parameterRoutes from './modules/parameters/parameter.routes.js';
 import kaizenRoutes from './modules/kaizens/kaizen.routes.js';
+import maintenanceRoutes from './modules/maintenance/maintenance.routes.js';
 
 // Breakdown routes
 import breakdownCategoryRoutes from './modules/breakdownCategories/breakdownCategory.routes.js';
@@ -49,6 +50,7 @@ app.use('/api/machines', machineRoutes);
 app.use('/api/meters', meterRoutes);
 app.use('/api/parameters', parameterRoutes);
 app.use('/api/kaizens', kaizenRoutes);
+app.use('/api/maintenance', maintenanceRoutes);
 
 // Breakdown management routes
 app.use('/api/breakdown-categories', breakdownCategoryRoutes);
