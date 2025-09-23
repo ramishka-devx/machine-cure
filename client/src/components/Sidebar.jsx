@@ -1,20 +1,19 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { navItems } from "../lib/navItems";
-import logo from '../assets/logo.png'
+import logo from "../assets/logo.png";
 
 const Sidebar = ({ onNavigate, collapsed = false }) => {
   const navigate = useNavigate();
-  const handleLogout = ()=>
-  {
+  const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/")  
-  }
+    navigate("/");
+  };
   return (
     <aside
       className={`${
         collapsed ? "w-16" : "w-72 lg:w-64"
-      } bg-gray-50 border-r border-gray-200 h-full flex flex-col shadow-sm transition-[width] duration-300 ease-in-out`}
+      } bg-gray-50 border-r border-gray-200 h-screen flex flex-col shadow-sm transition-[width] duration-300 ease-in-out sticky top-0`}
     >
       {/* Header */}
       <div

@@ -125,7 +125,7 @@ const CreateBreakdown = ({ onBreakdownCreated, onCancel }) => {
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-lg">
+    <div className="px-2 rounded-lg ">
       <h2 className="mb-6 text-gray-700 text-2xl font-semibold">Report New Breakdown</h2>
       
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">

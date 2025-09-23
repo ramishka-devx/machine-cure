@@ -278,7 +278,7 @@ const BreakdownList = ({ refreshTrigger }) => {
   };
 
   return (
-    <div className="bg-white px-2 rounded-lg ">
+    <div className=" px-2 rounded-lg ">
       {/* Success/Error Messages */}
       {message.text && (
         <div className={`p-3 mb-5 rounded-md font-medium border animate-in slide-in-from-top-2 duration-300 ${
@@ -291,15 +291,14 @@ const BreakdownList = ({ refreshTrigger }) => {
       )}
 
       {/* Filters Button */}
-      <div className="mb-6 flex justify-between items-center">
+      <div className="mb-6 flex justify-end items-center ">
         <button
           onClick={() => setShowFiltersModal(true)}
-          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+          className="inline-flex items-center px-4 py-2 text-blue-500 text-sm font-bold rounded-md hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
         >
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707v6.586a.5.5 0 01-.707.35l-4-2A.5.5 0 018 18.586v-5.172a1 1 0 00-.293-.707L1.293 6.293A1 1 0 011 5.586V4z" />
           </svg>
-          Filters & Search
         </button>
 
         {Object.values(filters).some(value => value && value !== 'created_at' && value !== 'desc') && (
@@ -349,7 +348,7 @@ const BreakdownList = ({ refreshTrigger }) => {
 
       {/* Breakdowns Table */}
       {!loading && (
-        <div className="overflow-x-auto mb-5">
+        <div className="overflow-x-auto mb-5 border border-gray-300">
           <table className="min-w-full border-collapse bg-white text-sm md:text-base">
             <thead>
               <tr>

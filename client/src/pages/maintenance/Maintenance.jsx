@@ -258,7 +258,6 @@ const Maintenance = () => {
     }
   };
 
-
   if (error) {
     return (
       <div className="bg-red-50 border border-red-200 rounded-md p-4">
@@ -276,18 +275,10 @@ const Maintenance = () => {
   }
 
   return (
-    <div className="space-y-6 px-8 py-6">
+    <div className="space-y-6 px-8 ">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">
-            Maintenance Management
-          </h1>
-          <p className="text-gray-600">
-            Manage machine maintenance schedules and records
-          </p>
-        </div>
-        <div className="flex space-x-3">
+        <div className="flex space-x-3 justify-end w-full">
           <button
             onClick={() => setShowFilterModal(true)}
             className=" text-gray-500 px-4 py-2 rounded-md hover:text-gray-900 transition-colors flex items-center"
@@ -309,7 +300,7 @@ const Maintenance = () => {
           </button>
           <button
             onClick={handleCreate}
-            className="bg-blue-600 text-white px-3 rounded-sm hover:bg-blue-700 transition-colors"
+            className="bg-blue-500 text-white px-3 rounded-sm hover:bg-blue-600 transition-colors"
           >
             Schedule
           </button>
@@ -322,99 +313,99 @@ const Maintenance = () => {
         filters.type ||
         filters.status ||
         filters.priority) && (
-          <div className="bg-white p-4 rounded-lg border border-gray-300">
-            <div className="flex justify-between items-center">
-              <div className="flex flex-wrap gap-2">
-                {filters.q && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
-                    Search: "{filters.q}"
-                    <button
-                      onClick={() => handleFilterChange("q", "")}
-                      className="ml-1 text-blue-600 hover:text-blue-800"
-                    >
-                      ×
-                    </button>
-                  </span>
-                )}
-                {filters.machine_id && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
-                    Machine:{" "}
-                    {machines.find((m) => m.machine_id == filters.machine_id)
-                      ?.title || "Unknown"}
-                    <button
-                      onClick={() => handleFilterChange("machine_id", null)}
-                      className="ml-1 text-green-600 hover:text-green-800"
-                    >
-                      ×
-                    </button>
-                  </span>
-                )}
-                {filters.type && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-800">
-                    Type: {filters.type}
-                    <button
-                      onClick={() => handleFilterChange("type", "")}
-                      className="ml-1 text-purple-600 hover:text-purple-800"
-                    >
-                      ×
-                    </button>
-                  </span>
-                )}
-                {filters.status && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">
-                    Status: {filters.status}
-                    <button
-                      onClick={() => handleFilterChange("status", "")}
-                      className="ml-1 text-yellow-600 hover:text-yellow-800"
-                    >
-                      ×
-                    </button>
-                  </span>
-                )}
-                {filters.priority && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-red-100 text-red-800">
-                    Priority: {filters.priority}
-                    <button
-                      onClick={() => handleFilterChange("priority", "")}
-                      className="ml-1 text-red-600 hover:text-red-800"
-                    >
-                      ×
-                    </button>
-                  </span>
-                )}
-                {!filters.q &&
-                  !filters.machine_id &&
-                  !filters.type &&
-                  !filters.status &&
-                  !filters.priority && (
-                    <span className="text-sm text-gray-500">
-                      No filters applied
-                    </span>
-                  )}
-              </div>
-              <div className="flex items-center space-x-3">
-                {(filters.q ||
-                  filters.machine_id ||
-                  filters.type ||
-                  filters.status ||
-                  filters.priority) && (
+        <div className="bg-white p-4 rounded-lg border border-gray-300">
+          <div className="flex justify-between items-center">
+            <div className="flex flex-wrap gap-2">
+              {filters.q && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                  Search: "{filters.q}"
                   <button
-                    onClick={clearFilters}
-                    className="text-sm text-gray-600 hover:text-gray-800 underline"
+                    onClick={() => handleFilterChange("q", "")}
+                    className="ml-1 text-blue-600 hover:text-blue-800"
                   >
-                    Clear all
+                    ×
                   </button>
+                </span>
+              )}
+              {filters.machine_id && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
+                  Machine:{" "}
+                  {machines.find((m) => m.machine_id == filters.machine_id)
+                    ?.title || "Unknown"}
+                  <button
+                    onClick={() => handleFilterChange("machine_id", null)}
+                    className="ml-1 text-green-600 hover:text-green-800"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {filters.type && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-800">
+                  Type: {filters.type}
+                  <button
+                    onClick={() => handleFilterChange("type", "")}
+                    className="ml-1 text-purple-600 hover:text-purple-800"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {filters.status && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">
+                  Status: {filters.status}
+                  <button
+                    onClick={() => handleFilterChange("status", "")}
+                    className="ml-1 text-yellow-600 hover:text-yellow-800"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {filters.priority && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-red-100 text-red-800">
+                  Priority: {filters.priority}
+                  <button
+                    onClick={() => handleFilterChange("priority", "")}
+                    className="ml-1 text-red-600 hover:text-red-800"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {!filters.q &&
+                !filters.machine_id &&
+                !filters.type &&
+                !filters.status &&
+                !filters.priority && (
+                  <span className="text-sm text-gray-500">
+                    No filters applied
+                  </span>
                 )}
+            </div>
+            <div className="flex items-center space-x-3">
+              {(filters.q ||
+                filters.machine_id ||
+                filters.type ||
+                filters.status ||
+                filters.priority) && (
                 <button
-                  onClick={() => setShowFilterModal(true)}
-                  className="text-sm text-blue-600 hover:text-blue-800 underline"
+                  onClick={clearFilters}
+                  className="text-sm text-gray-600 hover:text-gray-800 underline"
                 >
-                  Edit filters
+                  Clear all
                 </button>
-              </div>
+              )}
+              <button
+                onClick={() => setShowFilterModal(true)}
+                className="text-sm text-blue-600 hover:text-blue-800 underline"
+              >
+                Edit filters
+              </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
       {/* Results Summary */}
       <div className="flex justify-between items-center text-sm text-gray-600">
@@ -430,68 +421,46 @@ const Maintenance = () => {
 
       {/* Maintenance Records Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="space-y-4">
           {[...Array(6)].map((_, index) => (
-            <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 animate-pulse">
-              {/* Header with badges skeleton */}
-              <div className="flex justify-between items-start mb-4">
+            <div
+              key={index}
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 animate-pulse"
+            >
+              {/* Row skeleton */}
+              <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                 <div className="flex-1">
                   <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex gap-2 mb-2">
                     <div className="h-5 bg-gray-200 rounded-full w-16"></div>
                     <div className="h-5 bg-gray-200 rounded-full w-14"></div>
                     <div className="h-5 bg-gray-200 rounded-full w-18"></div>
                   </div>
+                  <div className="h-4 bg-gray-200 rounded w-2/3 mb-1"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-full"></div>
                 </div>
-              </div>
-
-              {/* Machine Info skeleton */}
-              <div className="mb-4 space-y-2">
-                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              </div>
-
-              {/* Description skeleton */}
-              <div className="mb-4 space-y-2">
-                <div className="h-4 bg-gray-200 rounded w-full"></div>
-                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-              </div>
-
-              {/* Dates skeleton */}
-              <div className="mb-4 space-y-2">
-                <div className="flex justify-between">
-                  <div className="h-3 bg-gray-200 rounded w-16"></div>
-                  <div className="h-3 bg-gray-200 rounded w-24"></div>
+                <div className="flex gap-4 lg:min-w-[300px]">
+                  <div className="space-y-2">
+                    <div className="h-3 bg-gray-200 rounded w-24"></div>
+                    <div className="h-3 bg-gray-200 rounded w-20"></div>
+                    <div className="h-3 bg-gray-200 rounded w-22"></div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-3 bg-gray-200 rounded w-28"></div>
+                    <div className="h-3 bg-gray-200 rounded w-24"></div>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <div className="h-3 bg-gray-200 rounded w-12"></div>
-                  <div className="h-3 bg-gray-200 rounded w-24"></div>
+                <div className="flex gap-2 lg:min-w-[200px]">
+                  <div className="h-8 w-16 bg-gray-200 rounded"></div>
+                  <div className="h-8 w-16 bg-gray-200 rounded"></div>
                 </div>
-              </div>
-
-              {/* Duration and Cost skeleton */}
-              <div className="mb-4 space-y-2">
-                <div className="flex justify-between">
-                  <div className="h-3 bg-gray-200 rounded w-20"></div>
-                  <div className="h-3 bg-gray-200 rounded w-16"></div>
-                </div>
-                <div className="flex justify-between">
-                  <div className="h-3 bg-gray-200 rounded w-16"></div>
-                  <div className="h-3 bg-gray-200 rounded w-20"></div>
-                </div>
-              </div>
-
-              {/* Actions skeleton */}
-              <div className="flex justify-end space-x-2">
-                <div className="h-8 w-16 bg-gray-200 rounded"></div>
-                <div className="h-8 w-16 bg-gray-200 rounded"></div>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="space-y-4">
           {maintenanceRecords.map((maintenance) => (
             <MaintenanceCard
               key={maintenance.maintenance_id}

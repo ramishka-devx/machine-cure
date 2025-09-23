@@ -47,24 +47,6 @@ const Dashboard = () => {
   return (
     <div className="p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-2">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Dashboard
-              </h1>
-              <p className="text-gray-600 mt-1">
-                Monitor your facility's operations and performance
-              </p>
-            </div>
-            <div className="text-right text-sm text-gray-500">
-              <div>Last updated</div>
-              <div className="font-medium">{new Date().toLocaleTimeString()}</div>
-            </div>
-          </div>
-        </div>
-
         {/* Metrics Section */}
         <MetricsSection metrics={metrics} loading={loading} />
 

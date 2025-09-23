@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
 import Topbar from '../components/Topbar'
 import SearchResults from '../components/SearchResults'
@@ -10,7 +10,19 @@ const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
   const searchWrapRef = useRef(null)
+
+  const getPageTitle = (pathname) => {
+    if (pathname.startsWith('/dashboard/users')) return 'User Management'
+    if (pathname.startsWith('/dashboard/machines')) return 'Machine Management'
+    if (pathname.startsWith('/dashboard/divisions')) return 'Division Management'
+    if (pathname.startsWith('/dashboard/maintenance')) return 'Maintenance Management'
+    if (pathname.startsWith('/dashboard/breakdown')) return 'Breakdown Management'
+    if (pathname.startsWith('/dashboard/kaizens')) return 'Kaizen Management'
+    if (pathname === '/dashboard') return 'Dashboard'
+    return 'Dashboard'
+  }
 
   const onPickSearch = (opt) => {
     setQuery('')
@@ -40,8 +52,11 @@ const DashboardLayout = () => {
             <SearchResults query={query} data={navItems} onPick={onPickSearch} />
           </div>
         </div>
-        <main className="flex-1 p-3 sm:p-4">
-          <div className="min-h-full rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+        <main className="flex-1 ">
+          <div className='bg-blue-500 text-white p-6 mb-2'>
+            <h1>{getPageTitle(location.pathname)}</h1>
+          </div>
+          <div className="min-h-full m-3 sm:m-4 rounded-sm overflow-hidden">
             <Outlet />
           </div>
         </main>

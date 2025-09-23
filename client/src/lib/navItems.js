@@ -60,16 +60,16 @@ export const navItems = [
       { key: 'breakdown-reports', label: 'Reports', to: '/dashboard/breakdown' },
     ],
   },
-  {
-    key: 'kaizens',
-    label: 'Kaizens',
-    to: '/dashboard/kaizens',
-    icon: FiZap,
-    children: [
-      { key: 'kaizens-all', label: 'All Kaizens', to: '/dashboard/kaizens' },
-      { key: 'kaizens-my', label: 'My Kaizens', to: '/dashboard/kaizens?submitted_by=me' },
-    ],
-  },
+    // {
+    //   key: 'kaizens',
+    //   label: 'Kaizens',
+    //   to: '/dashboard/kaizens',
+    //   icon: FiZap,
+    //   children: [
+    //     { key: 'kaizens-all', label: 'All Kaizens', to: '/dashboard/kaizens' },
+    //     { key: 'kaizens-my', label: 'My Kaizens', to: '/dashboard/kaizens?submitted_by=me' },
+    //   ],
+    // },
   {
     key: 'users',
     label: 'Users',

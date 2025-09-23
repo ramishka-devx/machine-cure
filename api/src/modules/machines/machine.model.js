@@ -13,7 +13,14 @@ export const MachineModel = {
     const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
     const offset = (Number(page) - 1) * Number(limit);
     const rows = await query(
-      `SELECT m.machine_id, m.title, d.division_id , d.title as division FROM machines m JOIN divisions d ON d.division_id = m.division_id ${whereSql} ORDER BY m.machine_id DESC LIMIT ? OFFSET ?`,
+      `SELECT 
+        m.machine_id,
+        m.title,
+        d.division_id ,
+        d.title as division 
+       FROM machines m 
+       LEFT JOIN divisions d ON d.division_id = m.division_id 
+       ${whereSql} ORDER BY m.machine_id DESC LIMIT ? OFFSET ?`,
       [...params, Number(limit), Number(offset)]
     );
     const [{ count }] = await query(

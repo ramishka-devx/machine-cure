@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { UsersService } from '../../services/users'
 import { RoleSelector } from './components/RoleSelector'
+import { RolesService } from '../../services/roles'
 import { RoleManager } from './components/RoleManager'
 import { toast } from 'react-toastify'
 
 export const Users = () => {
+
   const [loading, setLoading] = useState(true)
   const [analyticsLoading, setAnalyticsLoading] = useState(true)
   const [error, setError] = useState('')
@@ -15,6 +17,9 @@ export const Users = () => {
   const [analytics, setAnalytics] = useState({ total: 0, verified: 0, pending: 0, deleted: 0 })
   const [showRoleManager, setShowRoleManager] = useState(false)
   const [refreshFlag, setRefrshFlag] = useState(false);
+  const [roles, setRoles] = useState([])
+  const [rolesLoading, setRolesLoading] = useState(true)
+  const [rolesError, setRolesError] = useState('')
   const totalPages = useMemo(() => Math.max(1, Math.ceil(total / limit)), [total, limit])
 
   useEffect(() => {
@@ -25,8 +30,8 @@ export const Users = () => {
       try {
         const data = await UsersService.list({ page, limit })
         if (!ignore) {
-          setRows(data.rows ?? data?.data?.rows ?? [])
-          setTotal(data.total ?? data?.data?.total ?? 0)
+          setRows(data.rows ?? data?.data?.rows ?? []);
+          setTotal(data.total ?? data?.data?.total ?? 0);
         }
       } catch (e) {
         if (!ignore) setError(e?.message || 'Failed to load users')
@@ -37,6 +42,25 @@ export const Users = () => {
     load()
     return () => { ignore = true }
   }, [page, limit, refreshFlag])
+
+  // Fetch roles once
+  useEffect(() => {
+    let ignore = false;
+    const loadRoles = async () => {
+      setRolesLoading(true);
+      setRolesError('');
+      try {
+        const data = await RolesService.getAll();
+        if (!ignore) setRoles(data || []);
+      } catch (e) {
+        if (!ignore) setRolesError(e?.message || 'Failed to load roles');
+      } finally {
+        if (!ignore) setRolesLoading(false);
+      }
+    };
+    loadRoles();
+    return () => { ignore = true };
+  }, [refreshFlag]);
 
   useEffect(() => {
     let ignore = false
@@ -171,6 +195,9 @@ export const Users = () => {
                         value={u.role_id}
                         onChange={(roleId) => onChangeRole(u, roleId)}
                         className="border border-gray-300 rounded-md px-2 py-1 text-sm w-full"
+                        roles={roles}
+                        loading={rolesLoading}
+                        error={rolesError}
                       />
                     </td>
                     <td className="px-4 py-2">
@@ -207,7 +234,7 @@ export const Users = () => {
             <button
               disabled={page <= 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="px-3 py-1 rounded border disabled:opacity-50"
+              className="px-3 py-1 rounded border border-gray-200 bg-blue-400  disabled:opacity-50"
             >
               Prev
             </button>
@@ -215,16 +242,17 @@ export const Users = () => {
             <button
               disabled={page >= totalPages}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              className="px-3 py-1 rounded border disabled:opacity-50"
+              className="px-3 py-1 rounded border border-gray-200 bg-blue-400  disabled:opacity-50"
+              
             >
               Next
             </button>
             <select
               value={limit}
               onChange={(e) => { setPage(1); setLimit(Number(e.target.value)) }}
-              className="ml-2 border rounded px-2 py-1"
+              className="ml-2 border border-gray-200 rounded px-2 py-1"
             >
-              {[10, 20, 50].map(n => (
+              {[10  , 20, 50].map(n => (
                 <option key={n} value={n}>{n}/page</option>
               ))}
             </select>
@@ -245,3 +273,5 @@ export const Users = () => {
     </div>
   )
 }
+
+export default Users
