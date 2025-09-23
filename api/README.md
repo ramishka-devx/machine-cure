@@ -5,6 +5,7 @@ Install
 - Install deps: npm install
 - Create DB schema: npm run db:schema
 - Seed data: npm run db:seed
+- Seed permissions: npm run db:seed-permissions
 - Start dev: npm run dev
 
 Docs

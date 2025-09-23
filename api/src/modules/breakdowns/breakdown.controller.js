@@ -1,5 +1,6 @@
 import { success } from '../../utils/apiResponse.js';
 import { BreakdownService } from './breakdown.service.js';
+import { NotificationService } from '../notifications/notification.service.js';
 
 export const BreakdownController = {
   async create(req, res, next) { 
@@ -70,6 +71,23 @@ export const BreakdownController = {
       if (!data) {
         return res.status(404).json({ message: 'Breakdown not found' });
       }
+
+      // Create notification for the assigned user
+      try {
+        await NotificationService.createNotification(
+          req.body.assigned_to,
+          'breakdown_assigned',
+          'Breakdown Assigned',
+          `You have been assigned to repair breakdown #${req.params.breakdown_id}`,
+          'breakdown',
+          Number(req.params.breakdown_id),
+          'high'
+        );
+      } catch (notificationError) {
+        console.error('Failed to create notification:', notificationError);
+        // Don't fail the request if notification fails
+      }
+
       return success(res, data, 'Breakdown assigned successfully');
     } catch (e) { 
       next(e);

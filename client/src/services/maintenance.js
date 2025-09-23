@@ -130,5 +130,28 @@ export const maintenanceService = {
       console.error('Error fetching overdue maintenance:', error);
       throw error;
     }
+  },
+
+  // Get upcoming maintenance
+  getUpcomingMaintenance: async (params = {}) => {
+    try {
+      const queryParams = new URLSearchParams();
+      
+      // Add pagination parameters
+      if (params.page) queryParams.append('page', params.page);
+      if (params.limit) queryParams.append('limit', params.limit);
+      
+      // Add filter parameters
+      if (params.machine_id) queryParams.append('machine_id', params.machine_id);
+      if (params.type) queryParams.append('type', params.type);
+      if (params.priority) queryParams.append('priority', params.priority);
+      
+      const url = `/maintenance/upcoming${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+      const response = await http.get(url);
+      return response;
+    } catch (error) {
+      console.error('Error fetching upcoming maintenance:', error);
+      throw error;
+    }
   }
 };

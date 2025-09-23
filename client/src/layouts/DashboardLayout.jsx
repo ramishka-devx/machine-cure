@@ -56,7 +56,7 @@ const DashboardLayout = () => {
           <div className='bg-blue-500 text-white p-6 mb-2'>
             <h1>{getPageTitle(location.pathname)}</h1>
           </div>
-          <div className="min-h-full m-3 sm:m-4 rounded-sm overflow-hidden">
+          <div className="m-3 sm:m-4 rounded-sm overflow-hidden">
             <Outlet />
           </div>
         </main>

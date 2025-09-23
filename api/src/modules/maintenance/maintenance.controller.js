@@ -64,5 +64,21 @@ export const MaintenanceController = {
     } catch (e) {
       next(e);
     }
+  },
+
+  async getUpcoming(req, res, next) {
+    try {
+      const { page = 1, limit = 10, machine_id, type, priority } = req.query;
+      const data = await MaintenanceService.getUpcoming({
+        page: Number(page),
+        limit: Number(limit),
+        machine_id: machine_id !== undefined ? Number(machine_id) : undefined,
+        type: type?.toString().trim() || undefined,
+        priority: priority?.toString().trim() || undefined
+      });
+      return success(res, data);
+    } catch (e) {
+      next(e);
+    }
   }
 };

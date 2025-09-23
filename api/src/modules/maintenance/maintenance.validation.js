@@ -56,3 +56,13 @@ export const updateStatusSchema = Joi.object({
     status: Joi.string().valid('scheduled', 'in_progress', 'completed', 'cancelled', 'overdue').required()
   })
 });
+
+export const upcomingQuerySchema = Joi.object({
+  query: Joi.object({
+    page: Joi.number().min(1).default(1),
+    limit: Joi.number().min(1).max(100).default(10),
+    machine_id: Joi.number().integer(),
+    type: Joi.string().valid('preventive', 'corrective', 'predictive', 'emergency', 'routine', 'overhaul'),
+    priority: Joi.string().valid('low', 'medium', 'high', 'critical')
+  })
+});

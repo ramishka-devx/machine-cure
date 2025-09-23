@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { FiChevronLeft, FiChevronRight, FiSearch, FiBell, FiMenu } from 'react-icons/fi'
+import { FiChevronLeft, FiChevronRight, FiSearch, FiMenu } from 'react-icons/fi'
 import { usersService } from '../services/users.js'
+import NotificationsDropdown from './NotificationsDropdown.jsx'
 
 const Topbar = ({ query, setQuery, onBack, onMenu, collapsed = false }) => {
   const [user, setUser] = useState(null)
@@ -37,10 +38,7 @@ const Topbar = ({ query, setQuery, onBack, onMenu, collapsed = false }) => {
         </div>
       </div>
       <div className="flex items-center gap-3 sm:gap-4 pl-3">
-        <button className="relative p-2 rounded-lg hover:bg-gray-100" aria-label="Notifications">
-          <FiBell />
-          <span className="absolute -top-1 -right-1 h-4 w-4 text-[10px] bg-rose-500 text-white rounded-full flex items-center justify-center">2</span>
-        </button>
+        <NotificationsDropdown />
         <div className="flex items-center gap-2">
           <img className="h-9 w-9 rounded-full" src={user?.profileImg} />
           <div className="leading-tight hidden sm:block">

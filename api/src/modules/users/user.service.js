@@ -13,9 +13,8 @@ export const UserService = {
   },
   async login({ email, password }) {
     const user = await UserModel.findByEmail(email);
-    console.log(user)
-    if(user?.status != 'verified') throw unauthorized("only verified users can login!")
     if (!user) throw unauthorized('Invalid credentials');
+    if(user?.status != 'verified') throw unauthorized("only verified users can login!")
     const ok = await comparePassword(password, user.password_hash);
     if (!ok) throw unauthorized('Invalid credentials');
     const token = signToken({ user_id: user.user_id, role_id: user.role_id, email: user.email });

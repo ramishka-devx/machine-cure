@@ -33,7 +33,7 @@ const MetricCard = ({ title, value, icon, color = "blue", trend }) => {
 
   return (
     <div
-      className={`${colors.bg} border rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200`}
+      className={`${colors.bg} border rounded-sm p-6 shadow-sm hover:shadow-md transition-all duration-200`}
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
@@ -78,11 +78,8 @@ const MetricsSection = ({ metrics, loading = false }) => {
   }
 
   return (
-    <div className="mb-8">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3"></div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
         <MetricCard
           title="Total Machines"
           value={metrics?.machine_count || 0}

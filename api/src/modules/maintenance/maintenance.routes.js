@@ -4,7 +4,7 @@ import { permissionMiddleware } from '../../middleware/permissionMiddleware.js';
 import { activityLogger } from '../../middleware/activityLogger.js';
 import { validate } from '../../middleware/validateRequest.js';
 import { MaintenanceController } from './maintenance.controller.js';
-import { createSchema, updateSchema, listQuerySchema, updateStatusSchema } from './maintenance.validation.js';
+import { createSchema, updateSchema, listQuerySchema, updateStatusSchema, upcomingQuerySchema } from './maintenance.validation.js';
 
 const router = Router();
 
@@ -46,6 +46,14 @@ router.put('/:maintenance_id/status',
   activityLogger('maintenance.status.update'), 
   validate(updateStatusSchema), 
   MaintenanceController.updateStatus
+);
+
+// Upcoming maintenance
+router.get('/upcoming', 
+  authMiddleware, 
+  permissionMiddleware('maintenance.list'), 
+  validate(upcomingQuerySchema), 
+  MaintenanceController.getUpcoming
 );
 
 export default router;

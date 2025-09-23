@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Info } from 'lucide-react';
 import MetricsSection from '../components/dashboard/MetricsSection';
 import QuickActionsPanel from '../components/dashboard/QuickActionsPanel';
+import UpcomingMaintenance from '../components/dashboard/UpcomingMaintenance';
 import dashboardService from '../services/dashboard';
 
 const Dashboard = () => {
@@ -45,17 +46,20 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="px-6">
       <div className="max-w-7xl mx-auto">
         {/* Metrics Section */}
         <MetricsSection metrics={metrics} loading={loading} />
 
         {/* Quick Actions Panel */}
-        <QuickActionsPanel />
+        {/* <QuickActionsPanel /> */}
+
+        {/* Upcoming Maintenance */}
+        <UpcomingMaintenance />
 
         {/* Additional Info */}
         {!loading && (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <div className="bg-white rounded-sm border border-gray-200 shadow-sm p-6">
             <div className="flex items-start">
               <div className="bg-blue-50 p-2 rounded-lg mr-4 mt-1">
                 <Info className="w-5 h-5 text-blue-600" />

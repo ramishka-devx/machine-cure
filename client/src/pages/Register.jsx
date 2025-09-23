@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthService } from '../services/auth'
 import { toast } from 'react-toastify';
+import logo from '../assets/logo.png'
 
 const Register = () => {
   const navigate = useNavigate()
@@ -35,9 +36,11 @@ const Register = () => {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
         <div className="flex flex-col items-center mb-6">
-          <div className="h-12 w-12 rounded-xl bg-blue-600 flex items-center justify-center text-white text-2xl font-bold">🏭</div>
-          <h1 className="mt-4 text-xl font-semibold text-gray-800">Create your account</h1>
-          <p className="text-sm text-gray-500">Fill the form to register</p>
+          <div className="h-12 w-12 rounded-xl flex items-center justify-center text-white text-2xl font-bold">
+            <img src={logo} alt="" />
+          </div>
+          <h1 className="mt-4 text-3xl font-semibold text-gray-800">Machine Cure</h1>
+          <p className="text-sm text-gray-500">Welcome! Please create your account</p>
         </div>
 
         {error && <div className="mb-4 rounded-md bg-red-50 text-red-600 text-sm p-3 border border-red-200">{error}</div>}

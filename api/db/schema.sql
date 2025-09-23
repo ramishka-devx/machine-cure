@@ -293,6 +293,7 @@ CREATE TABLE IF NOT EXISTS machine_maintenance (
   status ENUM('scheduled', 'in_progress', 'completed', 'cancelled', 'overdue') DEFAULT 'scheduled',
   priority ENUM('low', 'medium', 'high', 'critical') DEFAULT 'medium',
   scheduled_by INT NOT NULL,
+  assigned_to INT NULL,
   estimated_duration_hours DECIMAL(5,2) DEFAULT 0,
   actual_duration_hours DECIMAL(5,2) NULL,
   estimated_cost DECIMAL(10,2) DEFAULT 0,
@@ -304,8 +305,25 @@ CREATE TABLE IF NOT EXISTS machine_maintenance (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (machine_id) REFERENCES machines(machine_id),
-  FOREIGN KEY (scheduled_by) REFERENCES users(user_id)
+  FOREIGN KEY (scheduled_by) REFERENCES users(user_id),
+  FOREIGN KEY (assigned_to) REFERENCES users(user_id)
 );
+
+CREATE TABLE `notifications` (
+  `notification_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `entity_type` varchar(50) DEFAULT NULL,
+  `entity_id` int(11) DEFAULT NULL,
+  `priority` enum('low','medium','high','critical') DEFAULT 'medium',
+  `is_read` tinyint(1) DEFAULT 0,
+  `read_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`notification_id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Maintenance Indexes
 CREATE INDEX IF NOT EXISTS idx_maintenance_machine ON machine_maintenance(machine_id);

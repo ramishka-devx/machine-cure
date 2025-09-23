@@ -5,5 +5,6 @@ export const MaintenanceService = {
   list: (filters) => MaintenanceModel.list(filters),
   update: (id, payload) => MaintenanceModel.update(id, payload),
   updateStatus: (id, status) => MaintenanceModel.updateStatus(id, status),
-  remove: (id) => MaintenanceModel.remove(id)
+  remove: (id) => MaintenanceModel.remove(id),
+  getUpcoming: (filters) => MaintenanceModel.getUpcoming(filters)
 };

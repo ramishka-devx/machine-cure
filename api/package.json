@@ -10,7 +10,8 @@
     "lint": "eslint \"src/**/*.js\"",
     "format": "prettier --write \"**/*.{js,json,md}\"",
     "db:schema": "node scripts/run-sql.js db/schema.sql",
-    "db:seed": "node scripts/run-sql.js db/seed.sql"
+    "db:seed": "node scripts/run-sql.js db/seed.sql",
+    "db:seed-permissions": "node scripts/seed-permissions.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -23,6 +24,8 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
     "mysql2": "^3.11.3",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^7.0.6",
     "pino": "^9.3.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"

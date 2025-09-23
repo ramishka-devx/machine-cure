@@ -130,5 +130,55 @@ export const MaintenanceModel = {
 
   async remove(id) {
     await query('DELETE FROM machine_maintenance WHERE maintenance_id = ?', [id]);
+  },
+
+  async getUpcoming({ page = 1, limit = 10, machine_id, type, priority } = {}) {
+    const where = ['mm.scheduled_date >= CURDATE()', "mm.status IN ('scheduled', 'in_progress')"];
+    const params = [];
+    
+    if (machine_id !== undefined) { 
+      where.push('mm.machine_id = ?'); 
+      params.push(machine_id); 
+    }
+    if (type) { 
+      where.push('mm.type = ?'); 
+      params.push(type); 
+    }
+    if (priority) { 
+      where.push('mm.priority = ?'); 
+      params.push(priority); 
+    }
+    
+    const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+    const offset = (Number(page) - 1) * Number(limit);
+    
+    const rows = await query(
+      `SELECT 
+        mm.maintenance_id, mm.machine_id, mm.title, mm.description, mm.type, mm.status, mm.priority,
+        mm.scheduled_by, mm.estimated_duration_hours, mm.actual_duration_hours, 
+        mm.estimated_cost, mm.actual_cost, mm.scheduled_date, mm.due_date, 
+        mm.started_at, mm.completed_at, mm.created_at, mm.updated_at,
+        m.title as machine_title,
+        CONCAT(u.first_name, ' ', u.last_name) as scheduled_by_name
+       FROM machine_maintenance mm 
+       JOIN machines m ON m.machine_id = mm.machine_id 
+       JOIN users u ON u.user_id = mm.scheduled_by
+       ${whereSql} 
+       ORDER BY mm.scheduled_date ASC 
+       LIMIT ? OFFSET ?`,
+      [...params, Number(limit), Number(offset)]
+    );
+    
+    const [{ count }] = await query(
+      `SELECT COUNT(*) as count FROM machine_maintenance mm ${whereSql}`,
+      params
+    );
+    
+    return { 
+      rows, 
+      total: count, 
+      page: Number(page), 
+      limit: Number(limit) 
+    };
   }
 };
