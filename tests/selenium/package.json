@@ -1,0 +1,20 @@
+{
+  "name": "machine-cure-selenium-tests",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Very simple Selenium WebDriver JS tests for Machine Cure UI",
+  "scripts": {
+    "test": "npx mocha test/*.test.js",
+    "test:login": "npx mocha test/login.test.js",
+    "test:machines-create": "npx mocha test/machines-create.test.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "chromedriver": "^141.0.3",
+    "dotenv": "^17.2.3",
+    "expect": "^29.7.0",
+    "mocha": "^10.7.3",
+    "selenium-webdriver": "^4.25.0"
+  }
+}
