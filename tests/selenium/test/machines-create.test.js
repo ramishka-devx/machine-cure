@@ -4,8 +4,6 @@ import { ServiceBuilder } from "selenium-webdriver/chrome.js";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import fs from "fs";
-import os from "os";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -21,19 +19,17 @@ const TEST_PASSWORD = process.env.TEST_PASSWORD;
 
 describe("Machines - Create Machine E2E", function () {
   this.timeout(90000);
+
   let driver;
 
-  before(async function () {
+  beforeEach(async function () {
+    // Chrome options
     const options = new chrome.Options();
-    // options.addArguments("--headless=new"); // Uncomment for CI use
+    // options.addArguments("--headless=new");
     options.addArguments("--window-size=1280,900");
     options.addArguments("--no-sandbox");
     options.addArguments("--disable-dev-shm-usage");
     options.addArguments("--disable-gpu");
-
-    // Create a guaranteed unique temporary Chrome user data directory
-    const userDataDir = fs.mkdtempSync(join(os.tmpdir(), "chrome-profile-"));
-    options.addArguments(`--user-data-dir=${userDataDir}`);
 
     // Explicit chromedriver path (local dependency, cross-platform)
     const basePath = join(
@@ -57,7 +53,7 @@ describe("Machines - Create Machine E2E", function () {
       .build();
   });
 
-  after(async function () {
+  afterEach(async function () {
     if (driver) {
       await driver.quit();
     }
@@ -81,6 +77,7 @@ describe("Machines - Create Machine E2E", function () {
     await pwdInput.sendKeys(TEST_PASSWORD);
     await submitBtn.click();
 
+    // Wait for redirect to dashboard
     await driver.wait(
       async () => (await driver.getCurrentUrl()).includes("/dashboard"),
       20000,
@@ -95,9 +92,10 @@ describe("Machines - Create Machine E2E", function () {
     // 2) Navigate to machines page
     await driver.get(`${APP_BASE_URL}/dashboard/machines`);
 
-    // 3) Click the Create button (supports both toolbar 'new' and empty-state 'Create Machine')
+    // 3) Click the Create button (supports both toolbar "new" and empty-state "Create Machine")
     const createButtonXpath =
       "//button[normalize-space(.)='new' or contains(normalize-space(.), 'Create Machine')]";
+
     const createButton = await driver.wait(
       until.elementLocated(By.xpath(createButtonXpath)),
       15000
@@ -107,6 +105,7 @@ describe("Machines - Create Machine E2E", function () {
 
     // 4) Fill the modal form
     const uniqueTitle = `AutoTest Machine ${Date.now()}`;
+
     const titleInput = await driver.wait(
       until.elementLocated(
         By.css('input[type="text"][placeholder="Enter machine title..."]')
@@ -117,7 +116,8 @@ describe("Machines - Create Machine E2E", function () {
     await titleInput.clear();
     await titleInput.sendKeys(uniqueTitle);
 
-    // Choose a division
+    // Choose a division via dropdown (required by backend schema)
+    // Open the CustomDropdown by targeting the Division label's following button
     const divisionDropdownBtn = await driver.wait(
       until.elementLocated(
         By.xpath(
@@ -129,6 +129,7 @@ describe("Machines - Create Machine E2E", function () {
     await driver.wait(until.elementIsVisible(divisionDropdownBtn), 10000);
     await divisionDropdownBtn.click();
 
+    // Wait for listbox and pick the first available option
     await driver.wait(
       until.elementLocated(By.css('div[role="listbox"]')),
       10000
@@ -152,20 +153,21 @@ describe("Machines - Create Machine E2E", function () {
     );
     await submitCreateBtn.click();
 
-    // 6) Wait for modal close and confirm the new machine appears
+    // 6) Verify the new machine appears in the list
+    // Wait for the modal to close by waiting for title input to become stale
     try {
       await driver.wait(until.stalenessOf(titleInput), 10000);
     } catch (_) {
       // If it didn't stale, continue; list may have updated in background
     }
 
+    // Wait for the machine title to be visible somewhere on the page
     const newMachineLocator = By.xpath(
       `//*[contains(normalize-space(.), "${uniqueTitle}")]`
     );
+
     await driver.wait(until.elementLocated(newMachineLocator), 20000);
     const newMachineEl = await driver.findElement(newMachineLocator);
     await driver.wait(until.elementIsVisible(newMachineEl), 10000);
-
-    console.log(`✓ Machine "${uniqueTitle}" created successfully`);
   });
 });
