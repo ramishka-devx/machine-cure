@@ -4,9 +4,9 @@
   "version": "1.0.0",
   "description": "Very simple Selenium WebDriver JS tests for Machine Cure UI",
   "scripts": {
-    "test": "npx mocha test/*.test.js",
-    "test:login": "npx mocha test/login.test.js",
-    "test:machine": "npx mocha test/machines-create.test.js"
+    "test": "npx mocha --no-parallel test/*.test.js",
+    "test:login": "npx mocha --no-parallel test/login.test.js",
+    "test:machine": "npx mocha --no-parallel test/machines-create.test.js"
   },
   "type": "module",
   "dependencies": {
