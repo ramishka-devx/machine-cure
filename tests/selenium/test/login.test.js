@@ -1,5 +1,6 @@
 import { Builder, By, until } from "selenium-webdriver";
 import chrome from "selenium-webdriver/chrome.js";
+import { ServiceBuilder } from "selenium-webdriver/chrome.js";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
@@ -24,7 +25,7 @@ describe("Authentication Tests", function () {
 
     // Set up Chrome options
   const options = new chrome.Options();
-    options.addArguments("--headless=new");
+    // options.addArguments("--headless=new");
     options.addArguments("--window-size=1280,900");
     options.addArguments("--no-sandbox");
     options.addArguments("--disable-dev-shm-usage");
@@ -34,10 +35,20 @@ describe("Authentication Tests", function () {
   options.addArguments(`--user-data-dir=${userDataDir}`);
 
 
+    // Set up ChromeDriver service with cross-platform path
+    const basePath = join(__dirname, "..", "node_modules", "chromedriver", "lib", "chromedriver");
+    const chromeDriverPath = process.platform === 'win32'
+      ? join(basePath, 'chromedriver.exe')
+      : join(basePath, 'chromedriver');
+    console.log("Using ChromeDriver at:", chromeDriverPath);
+
+    const service = new ServiceBuilder(chromeDriverPath);
+
     try {
       driver = await new Builder()
         .forBrowser("chrome")
         .setChromeOptions(options)
+        .setChromeService(service)
         .build();
       console.log("Chrome browser started successfully");
     } catch (error) {

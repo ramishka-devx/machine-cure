@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npx mocha test/*.test.js",
     "test:login": "npx mocha test/login.test.js",
-    "test:machines-create": "npx mocha test/machines-create.test.js"
+    "test:machine": "npx mocha test/machines-create.test.js"
   },
   "type": "module",
   "dependencies": {

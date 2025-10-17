@@ -15,7 +15,7 @@ const APP_BASE_URL = process.env.APP_BASE_URL || "http://localhost:5173";
 
 // Test credentials (must exist and have permission to create machines)
 const TEST_EMAIL = process.env.TEST_EMAIL;
-const TEST_PASSWORD = process.env.TEST_PASSWORD ;
+const TEST_PASSWORD = process.env.TEST_PASSWORD;
 
 describe("Machines - Create Machine E2E", function () {
   this.timeout(90000);
@@ -25,21 +25,25 @@ describe("Machines - Create Machine E2E", function () {
   beforeEach(async function () {
     // Chrome options
     const options = new chrome.Options();
-    if (!process.env.HEADFUL) {
-      options.addArguments("--headless=new");
-    }
+    // options.addArguments("--headless=new");
     options.addArguments("--window-size=1280,900");
     options.addArguments("--no-sandbox");
     options.addArguments("--disable-dev-shm-usage");
     options.addArguments("--disable-gpu");
-    const userDataDir = join(__dirname, '..', `.tmp-chrome-${Date.now()}-${Math.random().toString(16).slice(2)}`);
-    options.addArguments(`--user-data-dir=${userDataDir}`);
 
     // Explicit chromedriver path (local dependency, cross-platform)
-    const basePath = join(__dirname, "..", "node_modules", "chromedriver", "lib", "chromedriver");
-    const chromeDriverPath = process.platform === 'win32'
-      ? join(basePath, 'chromedriver.exe')
-      : join(basePath, 'chromedriver');
+    const basePath = join(
+      __dirname,
+      "..",
+      "node_modules",
+      "chromedriver",
+      "lib",
+      "chromedriver"
+    );
+    const chromeDriverPath =
+      process.platform === "win32"
+        ? join(basePath, "chromedriver.exe")
+        : join(basePath, "chromedriver");
     const service = new ServiceBuilder(chromeDriverPath);
 
     driver = await new Builder()
@@ -116,7 +120,9 @@ describe("Machines - Create Machine E2E", function () {
     // Open the CustomDropdown by targeting the Division label's following button
     const divisionDropdownBtn = await driver.wait(
       until.elementLocated(
-        By.xpath("//label[normalize-space(.)='Division']/following::button[@aria-haspopup='listbox'][1]")
+        By.xpath(
+          "//label[normalize-space(.)='Division']/following::button[@aria-haspopup='listbox'][1]"
+        )
       ),
       10000
     );
