@@ -1,0 +1,145 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test-e2e:
+    name: Build, seed DB, and run E2E tests
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+          MYSQL_DATABASE: machine_cure
+        ports:
+          - 3306:3306
+        # Health check to wait for MySQL readiness
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -uroot || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Setup Chrome (for Selenium)
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Wait for MySQL to be ready
+        run: |
+          for i in {1..30}; do
+            if mysqladmin ping -h 127.0.0.1 -uroot --silent; then
+              echo "MySQL is up"; break;
+            fi
+            echo "Waiting for MySQL..."; sleep 2;
+          done
+
+      # API: install deps, create schema, seed baseline & CI data, start server
+      - name: Install API dependencies
+        working-directory: api
+        run: npm ci || npm install
+
+      - name: Setup database schema
+        working-directory: api
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: root
+          DB_PASSWORD: ""
+          DB_NAME: machine_cure
+        run: |
+          node scripts/run-sql.js db/schema.sql
+
+      - name: Seed baseline data
+        working-directory: api
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: root
+          DB_PASSWORD: ""
+          DB_NAME: machine_cure
+        run: |
+          node scripts/run-sql.js db/seed.sql
+
+      - name: Seed CI data (admin user + a division)
+        working-directory: api
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: root
+          DB_PASSWORD: ""
+          DB_NAME: machine_cure
+          CI_ADMIN_EMAIL: "ramishka@gmail.com"
+          CI_ADMIN_PASSWORD: "111111"
+        run: node scripts/seed-ci.js
+
+      - name: Start API server
+        working-directory: api
+        env:
+          PORT: 3000
+          NODE_ENV: test
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: root
+          DB_PASSWORD: ""
+          DB_NAME: machine_cure
+        run: |
+          nohup node src/server.js > ../api_server.log 2>&1 &
+
+      - name: Install wait-on
+        run: npm install -g wait-on
+
+      - name: Wait for API to be ready
+        run: wait-on tcp:3000
+
+      # Client: install deps, build with API base URL, preview on 5173
+      - name: Install Client dependencies
+        working-directory: client
+        run: npm ci || npm install
+
+      - name: Build Client
+        working-directory: client
+        env:
+          VITE_API_BASE_URL: http://localhost:3000/api
+        run: npm run build
+
+      - name: Start Client preview server (5173)
+        working-directory: client
+        env:
+          VITE_API_BASE_URL: http://localhost:3000/api
+        run: |
+          nohup npm run preview -- --port 5173 --strictPort > ../client_preview.log 2>&1 &
+
+      - name: Wait for Client to be ready
+        run: wait-on tcp:5173
+
+      # Selenium E2E tests
+      - name: Install Selenium test dependencies
+        working-directory: tests/selenium
+        run: npm ci || npm install
+
+      - name: Run Selenium tests
+        working-directory: tests/selenium
+        env:
+          TEST_EMAIL: "ramishka@gmail.com"
+          TEST_PASSWORD: "111111"
+          APP_BASE_URL: http://localhost:5173
+        run: npm test
