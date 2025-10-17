@@ -261,26 +261,6 @@ CREATE TABLE IF NOT EXISTS breakdown_attachments (
   FOREIGN KEY (uploaded_by) REFERENCES users(user_id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
-CREATE INDEX IF NOT EXISTS idx_divisions_parent ON divisions(parent_id);
-CREATE INDEX IF NOT EXISTS idx_machines_division ON machines(division_id);
-CREATE INDEX IF NOT EXISTS idx_meters_machine ON meters(machine_id);
-CREATE INDEX IF NOT EXISTS idx_parameters_meter ON parameters(meter_id);
-CREATE INDEX IF NOT EXISTS idx_kaizens_submitted_by ON kaizens(submitted_by);
-CREATE INDEX IF NOT EXISTS idx_kaizens_assigned_to ON kaizens(assigned_to);
-CREATE INDEX IF NOT EXISTS idx_kaizens_status ON kaizens(status_id);
-CREATE INDEX IF NOT EXISTS idx_kaizens_category ON kaizens(category_id);
-CREATE INDEX IF NOT EXISTS idx_kaizens_machine ON kaizens(machine_id);
-CREATE INDEX IF NOT EXISTS idx_kaizens_division ON kaizens(division_id);
-CREATE INDEX IF NOT EXISTS idx_kaizen_comments_kaizen ON kaizen_comments(kaizen_id);
-CREATE INDEX IF NOT EXISTS idx_kaizen_history_kaizen ON kaizen_history(kaizen_id);
-CREATE INDEX IF NOT EXISTS idx_breakdowns_machine ON machine_breakdowns(machine_id);
-CREATE INDEX IF NOT EXISTS idx_breakdowns_status ON machine_breakdowns(status_id);
-CREATE INDEX IF NOT EXISTS idx_breakdowns_category ON machine_breakdowns(category_id);
-CREATE INDEX IF NOT EXISTS idx_breakdowns_reported_by ON machine_breakdowns(reported_by);
-CREATE INDEX IF NOT EXISTS idx_breakdowns_assigned_to ON machine_breakdowns(assigned_to);
-CREATE INDEX IF NOT EXISTS idx_repairs_breakdown ON breakdown_repairs(breakdown_id);
-CREATE INDEX IF NOT EXISTS idx_breakdown_comments_breakdown ON breakdown_comments(breakdown_id);
 
 -- Maintenance Management Tables
 
