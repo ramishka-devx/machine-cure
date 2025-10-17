@@ -158,4 +158,4 @@ jobs:
           TEST_EMAIL: "ramishka@gmail.com"
           TEST_PASSWORD: "111111"
           APP_BASE_URL: http://localhost:5173
-        run: npm run test:machines
+        run: npm test
