@@ -25,7 +25,7 @@ describe("Machines - Create Machine E2E", function () {
   beforeEach(async function () {
     // Chrome options
     const options = new chrome.Options();
-    options.addArguments("--headless=new");
+    // options.addArguments("--headless=new");
     options.addArguments("--window-size=1280,900");
     options.addArguments("--no-sandbox");
     options.addArguments("--disable-dev-shm-usage");
@@ -104,19 +104,6 @@ describe("Machines - Create Machine E2E", function () {
     await createButton.click();
 
     // 4) Fill the modal form
-    // Ensure the modal is fully open
-    try {
-      const modalHeader = await driver.wait(
-        until.elementLocated(
-          By.xpath("//h3[normalize-space(.)='Create New Machine']")
-        ),
-        15000
-      );
-      await driver.wait(until.elementIsVisible(modalHeader), 10000);
-    } catch (_) {
-      // proceed even if header check fails; title input wait below will also ensure modal is ready
-    }
-
     const uniqueTitle = `AutoTest Machine ${Date.now()}`;
 
     const titleInput = await driver.wait(
@@ -131,18 +118,13 @@ describe("Machines - Create Machine E2E", function () {
 
     // Choose a division via dropdown (required by backend schema)
     // Open the CustomDropdown by targeting the Division label's following button
-    // In CI, divisions fetch can be slow; wait up to 30s for the dropdown to render after loading state
     const divisionDropdownBtn = await driver.wait(
-      async () => {
-        const matches = await driver.findElements(
-          By.xpath(
-            "//label[normalize-space(.)='Division']/following::button[@aria-haspopup='listbox'][1]"
-          )
-        );
-        return matches.length > 0 ? matches[0] : false;
-      },
-      30000,
-      "Division dropdown did not appear in time"
+      until.elementLocated(
+        By.xpath(
+          "//label[normalize-space(.)='Division']/following::button[@aria-haspopup='listbox'][1]"
+        )
+      ),
+      10000
     );
     await driver.wait(until.elementIsVisible(divisionDropdownBtn), 10000);
     await divisionDropdownBtn.click();
