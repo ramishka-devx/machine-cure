@@ -43,14 +43,11 @@ jobs:
       - name: Setup Chrome (for Selenium)
         uses: browser-actions/setup-chrome@v1
 
+      - name: Install wait-on
+        run: npm install -g wait-on
+
       - name: Wait for MySQL to be ready
-        run: |
-          for i in {1..30}; do
-            if mysqladmin ping -h 127.0.0.1 -uroot --silent; then
-              echo "MySQL is up"; break;
-            fi
-            echo "Waiting for MySQL..."; sleep 2;
-          done
+        run: wait-on tcp:3306
 
       # API: install deps, create schema, seed baseline & CI data, start server
       - name: Install API dependencies
@@ -103,9 +100,6 @@ jobs:
           DB_NAME: machine_cure
         run: |
           nohup node src/server.js > ../api_server.log 2>&1 &
-
-      - name: Install wait-on
-        run: npm install -g wait-on
 
       - name: Wait for API to be ready
         run: wait-on tcp:3000
