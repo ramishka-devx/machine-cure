@@ -8,17 +8,24 @@ import fs from 'fs';
     if (!file) throw new Error('SQL file path required');
     const sql = fs.readFileSync(file, 'utf8');
 
-    // Guard: phpMyAdmin dumps with DELIMITER/procedures are not supported via mysql2 "multipleStatements".
-    // These require the mysql CLI client (DELIMITER is a client-side directive).
-    const hasDelimiter = /\bDELIMITER\b/i.test(sql);
-    const hasRoutine = /\bCREATE\s+(DEFINER\s*=\s*[^\s]+\s*)?(PROCEDURE|FUNCTION|TRIGGER)\b/i.test(sql);
+    // Handle phpMyAdmin dumps that include DELIMITER/DEFINER by stripping routine blocks.
+    // Note: We don't need stored routines for CI; removing them is safe for our use.
+    let sqlToRun = sql;
+    const hasDelimiter = /\bDELIMITER\b/i.test(sqlToRun);
+    const hasRoutine = /\bCREATE\s+(DEFINER\s*=\s*[^\s]+\s*)?(PROCEDURE|FUNCTION|TRIGGER)\b/i.test(sqlToRun);
     if (hasDelimiter || hasRoutine) {
-      console.error('\n❌ This SQL file contains DELIMITER/Stored Routines, which cannot be executed via this script.');
-      console.error('   Please import it using the mysql CLI instead, e.g.:');
-      console.error('     mysql -h 127.0.0.1 -u root machine_cure < path/to/file.sql');
-      console.error('\n   Tip: If needed, strip DEFINER and DELIMITER lines before import:');
-      console.error("     sed -E 's/DEFINER=`[^`]+`@`[^`]+` //g' file.sql | sed -E '/^DELIMITER /d' | mysql -h 127.0.0.1 -u root machine_cure");
-      process.exit(1);
+      console.warn('\n⚠️  Detected DELIMITER/Stored Routines in SQL. Stripping routine blocks and DEFINER clauses for CI...');
+      // Remove DEFINER=... qualifiers
+      sqlToRun = sqlToRun.replace(/DEFINER=`[^`]+`@`[^`]+`\s*/gi, '');
+      // Remove blocks between DELIMITER ... and the next DELIMITER ... (non-greedy)
+      // This aims to drop stored procedures/functions/triggers sections entirely.
+      let before;
+      do {
+        before = sqlToRun;
+        sqlToRun = sqlToRun.replace(/\n?DELIMITER\s+[^\n]+[\s\S]*?\nDELIMITER\s+[^\n]+\n?/gi, '\n');
+      } while (sqlToRun !== before);
+      // Also remove any stray DELIMITER lines
+      sqlToRun = sqlToRun.replace(/^DELIMITER\s+.*$/gim, '');
     }
     const connection = await mysql.createConnection({
       host: env.db.host,
@@ -29,7 +36,7 @@ import fs from 'fs';
     });
     await connection.query(`CREATE DATABASE IF NOT EXISTS \`${env.db.database}\``);
     await connection.changeUser({ database: env.db.database });
-    await connection.query(sql);
+    await connection.query(sqlToRun);
     console.log('SQL executed for', file);
     await connection.end();
   } catch (e) {

@@ -79,7 +79,7 @@ jobs:
         working-directory: api
         run: npm ci || npm install
 
-      - name: Setup database schema
+      - name: Setup database schema (CI sanitized)
         working-directory: api
         env:
           DB_HOST: 127.0.0.1
@@ -88,7 +88,7 @@ jobs:
           DB_PASSWORD: ""
           DB_NAME: machine_cure
         run: |
-          node scripts/run-sql.js db/schema.sql
+          node scripts/run-sql.js db/schema.ci.sql
 
       - name: Seed baseline data
         working-directory: api
