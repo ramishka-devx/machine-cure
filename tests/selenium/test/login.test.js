@@ -31,6 +31,7 @@ describe("Authentication Tests", function () {
     options.addArguments("--disable-dev-shm-usage");
     options.addArguments("--disable-gpu");
 
+    
     // Set up ChromeDriver service with cross-platform path
     const basePath = join(__dirname, "..", "node_modules", "chromedriver", "lib", "chromedriver");
     const chromeDriverPath = process.platform === 'win32'
