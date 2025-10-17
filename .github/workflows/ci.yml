@@ -43,6 +43,50 @@ jobs:
       - name: Setup Chrome (for Selenium)
         uses: browser-actions/setup-chrome@v1
 
+      - name: Create API .env (from secrets or defaults)
+        env:
+          NODE_ENV: test
+          PORT: 3000
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
+          RATE_LIMIT_WINDOW_MS: ${{ secrets.RATE_LIMIT_WINDOW_MS }}
+          RATE_LIMIT_MAX: ${{ secrets.RATE_LIMIT_MAX }}
+          EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+          EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+          EMAIL_SECURE: ${{ secrets.EMAIL_SECURE }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+        run: |
+          cat > api/.env <<EOF
+          NODE_ENV=${NODE_ENV:-test}
+          PORT=${PORT:-3000}
+
+          DB_HOST=${DB_HOST:-127.0.0.1}
+          DB_PORT=${DB_PORT:-3306}
+          DB_USER=${DB_USER:-root}
+          DB_PASSWORD=${DB_PASSWORD:-}
+          DB_NAME=${DB_NAME:-machine_cure}
+
+          JWT_SECRET=${JWT_SECRET:-dev-secret}
+          JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-1d}
+
+          RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-60000}
+          RATE_LIMIT_MAX=${RATE_LIMIT_MAX:-100}
+
+          EMAIL_HOST=${EMAIL_HOST:-smtp.gmail.com}
+          EMAIL_PORT=${EMAIL_PORT:-587}
+          EMAIL_SECURE=${EMAIL_SECURE:-false}
+          EMAIL_USER=${EMAIL_USER:-}
+          EMAIL_PASS=${EMAIL_PASS:-}
+          EMAIL_FROM=${EMAIL_FROM:-noreply@machinecure.com}
+          EOF
+
       - name: Install wait-on
         run: npm install -g wait-on
 
