@@ -2,11 +2,36 @@ import { env } from '../src/config/env.js';
 import mysql from 'mysql2/promise';
 import fs from 'fs';
 
+function splitSqlStatements(sql) {
+  // Split on semicolons that are not inside string literals.
+  const statements = [];
+  let current = '';
+  let inSingle = false;
+  let inDouble = false;
+  let prevChar = '';
+
+  for (let i = 0; i < sql.length; i++) {
+    const ch = sql[i];
+    if (ch === "'" && !inDouble && prevChar !== '\\') inSingle = !inSingle;
+    else if (ch === '"' && !inSingle && prevChar !== '\\') inDouble = !inDouble;
+
+    if (ch === ';' && !inSingle && !inDouble) {
+      if (current.trim()) statements.push(current.trim());
+      current = '';
+    } else {
+      current += ch;
+    }
+    prevChar = ch;
+  }
+  if (current.trim()) statements.push(current.trim());
+  return statements;
+}
+
 (async function main() {
   try {
     const file = process.argv[2];
     if (!file) throw new Error('SQL file path required');
-    const sql = fs.readFileSync(file, 'utf8');
+  const sql = fs.readFileSync(file, 'utf8');
 
     // Handle phpMyAdmin dumps that include DELIMITER/DEFINER by stripping routine blocks.
     // Note: We don't need stored routines for CI; removing them is safe for our use.
@@ -36,8 +61,18 @@ import fs from 'fs';
     });
     await connection.query(`CREATE DATABASE IF NOT EXISTS \`${env.db.database}\``);
     await connection.changeUser({ database: env.db.database });
-    await connection.query(sqlToRun);
-    console.log('SQL executed for', file);
+    // Execute statements individually for clearer diagnostics and to avoid empty-statement errors
+    const statements = splitSqlStatements(sqlToRun);
+    for (const [idx, stmt] of statements.entries()) {
+      try {
+        await connection.query(stmt);
+      } catch (err) {
+        const snippet = stmt.length > 300 ? stmt.slice(0, 300) + '…' : stmt;
+        console.error(`\n❌ SQL error in ${file} at statement #${idx + 1}:\n${snippet}\n`);
+        throw err;
+      }
+    }
+    console.log(`SQL executed for ${file} (${statements.length} statements)`);
     await connection.end();
   } catch (e) {
     console.error(e);
