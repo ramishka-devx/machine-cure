@@ -326,11 +326,3 @@ CREATE TABLE `notifications` (
   FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Maintenance Indexes
-CREATE INDEX IF NOT EXISTS idx_maintenance_machine ON machine_maintenance(machine_id);
-CREATE INDEX IF NOT EXISTS idx_maintenance_type ON machine_maintenance(type);
-CREATE INDEX IF NOT EXISTS idx_maintenance_status ON machine_maintenance(status);
-CREATE INDEX IF NOT EXISTS idx_maintenance_scheduled_by ON machine_maintenance(scheduled_by);
-CREATE INDEX IF NOT EXISTS idx_maintenance_assigned_to ON machine_maintenance(assigned_to);
-CREATE INDEX IF NOT EXISTS idx_maintenance_scheduled_date ON machine_maintenance(scheduled_date);
-CREATE INDEX IF NOT EXISTS idx_maintenance_due_date ON machine_maintenance(due_date);
