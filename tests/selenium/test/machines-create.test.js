@@ -25,7 +25,7 @@ describe("Machines - Create Machine E2E", function () {
   beforeEach(async function () {
     // Chrome options
     const options = new chrome.Options();
-    // options.addArguments("--headless=new");
+    options.addArguments("--headless=new");
     options.addArguments("--window-size=1280,900");
     options.addArguments("--no-sandbox");
     options.addArguments("--disable-dev-shm-usage");
