@@ -109,11 +109,7 @@ jobs:
           CI_ADMIN_EMAIL: "ramishka@gmail.com"
           CI_ADMIN_PASSWORD: "111111"
         run: node scripts/seed-ci.js
-
-      - name: Seed permissions via script
-        working-directory: api
-        run: node scripts/seed-permissions.js
-
+        
       - name: Start API server
         working-directory: api
         env:
