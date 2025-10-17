@@ -30,6 +30,10 @@ describe("Machines - Create Machine E2E", function () {
     options.addArguments("--no-sandbox");
     options.addArguments("--disable-dev-shm-usage");
     options.addArguments("--disable-gpu");
+    
+    // Ensure isolated user data per test run (fix session not created in CI)
+    const userDataDir = join(__dirname, '..', `.tmp-chrome-${Date.now()}-${Math.random().toString(16).slice(2)}`);
+    options.addArguments(`--user-data-dir=${userDataDir}`);
 
     // Explicit chromedriver path (local dependency, cross-platform)
     const basePath = join(
