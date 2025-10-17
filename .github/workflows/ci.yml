@@ -90,7 +90,7 @@ jobs:
         run: |
           node scripts/run-sql.js db/schema.ci.sql
 
-      - name: Seed baseline data
+      - name: Seed baseline data (CI-safe)
         working-directory: api
         env:
           DB_HOST: 127.0.0.1
@@ -99,19 +99,20 @@ jobs:
           DB_PASSWORD: ""
           DB_NAME: machine_cure
         run: |
-          node scripts/run-sql.js db/seed.sql
+          node scripts/run-sql.js db/seed.base.ci.sql
+          node scripts/run-sql.js db/breakdown_statuses_seed.sql
+          node scripts/run-sql.js db/kaizen_seed.ci.sql
 
       - name: Seed CI data (admin user + a division)
         working-directory: api
         env:
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_USER: root
-          DB_PASSWORD: ""
-          DB_NAME: machine_cure
           CI_ADMIN_EMAIL: "ramishka@gmail.com"
           CI_ADMIN_PASSWORD: "111111"
         run: node scripts/seed-ci.js
+
+      - name: Seed permissions via script
+        working-directory: api
+        run: node scripts/seed-permissions.js
 
       - name: Start API server
         working-directory: api
